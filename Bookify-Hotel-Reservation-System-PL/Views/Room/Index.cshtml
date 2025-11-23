@@ -1,0 +1,70 @@
+﻿@using Bookify_Hotel_Reservation_System__DAL.Models
+@model IEnumerable<Room>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/IndexStyle.css" />
+}
+
+@if (Model.Count()>0)
+{
+    <table>
+        <thead>
+            <tr>
+                <td>Room Number</td>
+                <td>Room Type</td>
+                <td>Room Description</td>
+                <td>Price per Day</td>
+                <td>Is Available</td>
+            </tr>
+        </thead>
+        <tbody>
+                <tr>
+                    @foreach(var room in Model)
+                    {
+                        <td>@room.RoomNumber</td>
+                        <td>@room.RoomType</td>
+                        <td>@room.Description</td>
+                        <td>@room.PricePerNight</td>
+                        <td>@room.IsAvailable</td>
+                    }
+                </tr>
+        </tbody>
+    </table>
+    
+}
+else
+{
+    <div class="alert alert-danger">
+        No rooms
+    </div>
+}
+
+
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+          const userSection = document.getElementById("user-section");
+          const username = localStorage.getItem("username");
+
+          if (username) {
+            userSection.innerHTML = `
+              <div class="flex items-center space-x-3 text-[#e5e3df]">
+                <i class="fa-solid fa-user text-[#cbb58f] text-lg"></i>
+                <span class="font-medium">${username}</span>
+                <button id="logout-btn" class="ml-3 text-sm text-[#cbb58f] hover:underline">Logout</button>
+              </div>
+            `;
+
+            document.getElementById("logout-btn").addEventListener("click", () => {
+              localStorage.removeItem("username");
+              location.reload();
+            });
+          }
+        });
+    </script>
+}

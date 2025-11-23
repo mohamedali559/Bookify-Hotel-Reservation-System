@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36310.24
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookify-Hotel-Reservation-System- DAL", "Bookify-Hotel-Reservation-System- DAL\Bookify-Hotel-Reservation-System- DAL.csproj", "{BE20A0C0-9D9C-4C18-A35D-20AA00747344}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookify-Hotel-Reservation-System-DAL", "Bookify-Hotel-Reservation-System- DAL\Bookify-Hotel-Reservation-System-DAL.csproj", "{BE20A0C0-9D9C-4C18-A35D-20AA00747344}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bookify-Hotel-Reservation-System-BLL", "Bookify-Hotel-Reservation-System-BLL\Bookify-Hotel-Reservation-System-BLL.csproj", "{E9DAB529-60E2-4DF9-8B14-0B1898D762F9}"
 EndProject
