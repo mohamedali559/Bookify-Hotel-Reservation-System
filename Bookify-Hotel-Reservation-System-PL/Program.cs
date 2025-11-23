@@ -1,4 +1,7 @@
 using Bookify_Hotel_Reservation_System__DAL.Contexts;
+using Bookify_Hotel_Reservation_System__DAL.Models;
+using Bookify_Hotel_Reservation_System_BLL.Interfaces;
+using Bookify_Hotel_Reservation_System_BLL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +13,8 @@ builder.Services.AddDbContext<BookifyContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 });
+
+builder.Services.AddScoped<IRoomRepository , RoomRepository>();
 
 var app = builder.Build();
 
