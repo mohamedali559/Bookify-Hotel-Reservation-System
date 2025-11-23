@@ -18,16 +18,16 @@
             </tr>
         </thead>
         <tbody>
+            @foreach(var room in Model)
+            {
                 <tr>
-                    @foreach(var room in Model)
-                    {
                         <td>@room.RoomNumber</td>
                         <td>@room.RoomType</td>
                         <td>@room.Description</td>
                         <td>@room.PricePerNight</td>
                         <td>@room.IsAvailable</td>
-                    }
                 </tr>
+            }
         </tbody>
     </table>
     
