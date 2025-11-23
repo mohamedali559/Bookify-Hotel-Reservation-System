@@ -10,7 +10,6 @@
     <link rel="stylesheet" href="~/css/LayoutStyle.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/LayoutStyle.css">
     @await RenderSectionAsync("Styles", required: false)
 
 </head>
@@ -46,7 +45,7 @@
     @RenderSection("Hero", required: false)
 
     <!-- PAGE CONTENT -->
-    <div class="container pt-10 max-w-full mx-auto px-5 mt-8">
+    <div class="container pt-10 max-w-full mx-auto px-5 mt-12">
         <main role="main" class="pb-1">
             @RenderBody()
         </main>
