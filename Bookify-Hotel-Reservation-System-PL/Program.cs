@@ -4,35 +4,37 @@ using Bookify_Hotel_Reservation_System_BLL.Interfaces;
 using Bookify_Hotel_Reservation_System_BLL.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+    var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+    // Add services to the container.
+    builder.Services.AddControllersWithViews();
+    builder.Services.AddIdentity<ApplicationUser, ApplicationRole>().AddEntityFrameworkStores<BookifyDbContext>();
 
-builder.Services.AddDbContext<BookifyContext>(options =>
+builder.Services.AddDbContext<BookifyDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 });
 
+
 builder.Services.AddScoped<IRoomRepository , RoomRepository>();
 
-var app = builder.Build();
+    var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
-{
-    app.UseExceptionHandler("/Home/Error");
-}
-app.UseRouting();
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        app.UseExceptionHandler("/Home/Error");
+    }
+    app.UseRouting();
 
-app.UseAuthorization();
+    app.UseAuthorization();
 
-app.MapStaticAssets();
+    app.MapStaticAssets();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}")
-    .WithStaticAssets();
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}")
+        .WithStaticAssets();
 
 
-app.Run();
+    app.Run();
