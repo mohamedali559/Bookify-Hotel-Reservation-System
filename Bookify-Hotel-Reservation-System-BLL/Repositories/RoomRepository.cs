@@ -11,8 +11,8 @@ namespace Bookify_Hotel_Reservation_System_BLL.Repositories
 {
     public class RoomRepository : IRoomRepository
     {
-        private readonly BookifyContext _Context;
-        public RoomRepository(BookifyContext context)
+        private readonly BookifyDbContext _Context;
+        public RoomRepository(BookifyDbContext context)
         {
             _Context = context;
         }

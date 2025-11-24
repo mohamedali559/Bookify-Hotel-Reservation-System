@@ -10,31 +10,29 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
 {
     public class Room
     {
-
-        [Key]
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(10)]
         public string RoomNumber { get; set; }
+        public int Floor { get; set; }
+
+        [MaxLength(300)]
+        public string Description { get; set; }
+        public bool IsAvailable { get; set; }
 
         [Required]
-        public string RoomType { get; set; }
+        [Range(0, 999999)]
+        public decimal PricePerDay { get; set; }
 
-        public string Description { get; set; }
+        [Required]
+        public int RoomTypeId { get; set; }
+        public RoomType RoomType { get; set; }
 
-        [Column(TypeName = "decimal(18,2)")]
-        [Range(0, 99999)]
-        public decimal PricePerNight { get; set; }
+        public ICollection<Booking> Bookings { get; set; }
+        public ICollection<RoomAmenity> RoomAmenities { get; set; }
 
-        public bool IsAvailable { get; set; } = true;
 
-        [Range(1, 10)]
-        public int Capacity { get; set; }
-
-        public string? ImageUrl { get; set; }
-
-        public bool IsBooked { get; set; } = false;
-
-        // public ICollection<Reservation>? Reservations { get; set; }
     }
+
 }
