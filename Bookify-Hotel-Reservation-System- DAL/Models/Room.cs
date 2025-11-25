@@ -17,13 +17,11 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
         public string? RoomNumber { get; set; }
         public int Floor { get; set; }
 
-        [MaxLength(300)]
-        public string? Description { get; set; }
         public bool IsAvailable { get; set; }
 
+
         [Required]
-        [Range(0, 999999)]
-        public decimal PricePerDay { get; set; }
+        public string ImageUrl { get; set; }
 
         [Required]
         public int RoomTypeId { get; set; }

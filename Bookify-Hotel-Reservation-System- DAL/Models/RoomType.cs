@@ -23,8 +23,5 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
 
         public ICollection<Room> Rooms { get; set; }
     }
-    //public enum RoomTypeName
-    //{
 
-    //}
 }

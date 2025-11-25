@@ -1,11 +1,4 @@
-﻿using Bookify_Hotel_Reservation_System__DAL.Contexts;
-using Bookify_Hotel_Reservation_System__DAL.Models;
-using Bookify_Hotel_Reservation_System_BLL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace Bookify_Hotel_Reservation_System_BLL.Repositories
 {
@@ -17,10 +10,9 @@ namespace Bookify_Hotel_Reservation_System_BLL.Repositories
             _Context = context;
         }
 
-        public Room Add(Room room)
+        public void Add(Room room)
         {
             _Context.Rooms.Add(room);
-            return room;
         }
 
         public bool Delete(int id)
@@ -47,6 +39,11 @@ namespace Bookify_Hotel_Reservation_System_BLL.Repositories
         {
             _Context.Rooms.Update(room);
             return room;
+        }
+
+        public void Save()
+        {
+            _Context.SaveChanges();
         }
     }
 }
