@@ -13,7 +13,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         }
         public IActionResult Index()
         {
-            var rooms = _bookingRepository.GetAllWithRoomsAndUser();
+            var rooms = _bookingRepository.Include(r => r.room).GetAll();
             return View(rooms);
         }
     }

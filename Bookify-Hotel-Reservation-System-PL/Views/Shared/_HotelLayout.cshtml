@@ -8,35 +8,31 @@
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2357/2357000.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/LayoutStyle.css" />
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
     @await RenderSectionAsync("Styles", required: false)
-
 </head>
 
 <body>
-    <nav class="fixed w-full z-50 bg-gradient-to-r from-[#2e2b29] to-[#2e2b29]/90 backdrop-blur-md border-b border-[#a8926b]/20">
-        <div class="max-w-7xl mx-auto px-5 py-3 flex items-center justify-between">
-            <div class="flex items-center space-x-3">
-                <div class="bg-[#cbb58f] text-[#2e2b29] font-bold px-3 py-1 rounded-lg">GH</div>
-                <h1 class="text-lg font-semibold" id="HotelName">Golden Horizon</h1>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo-section">
+                <div class="logo-box">GH</div>
+                <h1 class="logo-text">Golden Horizon</h1>
             </div>
 
-            <div class="hidden md:flex items-center space-x-8 text-[#e5e3df]">
-                <a href="index.html" class="hover:text-[#cbb58f] transition">Home</a>
-                <a href="rooms.html" class="hover:text-[#cbb58f] transition">Rooms</a>
-                <a href="amenities.html" class="hover:text-[#cbb58f] transition">Amenities</a>
-                <a href="gallery.html" class="hover:text-[#cbb58f] transition">Gallery</a>
-                <a href="about.html" class="hover:text-[#cbb58f] transition">About</a>
-                <a href="contact.html" class="hover:text-[#cbb58f] transition">Contact</a>
-                <a href="_Layout.html" class="hover:text-[#cbb58f] transition">Layout</a>
+            <div class="nav-links" id="nav-links">
+                <a asp-controller="Home" asp-action="Index">Home</a>
+                <a asp-controller="Room" asp-action="Room_Index">Rooms</a>
+                <a asp-controller="Amenities" asp-action="Index">Amenities</a>
+                <a asp-controller="Gallery" asp-action="Index">Gallery</a>
+                <a asp-controller="About" asp-action="Index" class="active">About</a>
+                <a asp-controller="Contact" asp-action="Index">Contact</a>
+            </div>
+            <div class="hamburger" id="hamburger">
+                <i class="fas fa-bars"></i>
             </div>
 
-            <div class="flex items-center space-x-4">
-
-                <button class="bg-[#cbb58f] text-[#2e2b29] px-4 py-2 rounded-lg font-medium hover:bg-[#d7c29b] transition">
-                    Book Now
-                </button>
+            <div class="user-section" id="user-section">
+                <a asp-controller="Account" asp-action="Login">Log In</a>
             </div>
         </div>
     </nav>
@@ -54,7 +50,8 @@
 
 
 
-    <footer class="border-top footer text-muted">
+
+    <footer class="footer">
         <div class="footer-container">
             <div class="footer-about">
                 <div class="footer-logo">
@@ -62,18 +59,17 @@
                     <h2>Golden Horizon</h2>
                 </div>
                 <p>
-                    A haven of elegance, comfort, and unforgettable experiences. Discover the perfect stay at Golden
-                    Horizon.
+                    A haven of elegance, comfort, and unforgettable experiences. Discover the perfect stay at Golden Horizon.
                 </p>
             </div>
 
             <div class="footer-links">
                 <h3>Quick Links</h3>
                 <ul>
-                    <li><a href="#">Home</a></li>
-                    <li><a href="#">Rooms</a></li>
-                    <li><a href="#">Gallery</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                    <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
+                    <li><a asp-controller="Gallery" asp-action="Index">Gallery</a></li>
+                    <li><a asp-controller="Contact" asp-action="Index">Contact</a></li>
                 </ul>
             </div>
 
@@ -86,6 +82,7 @@
                 </div>
             </div>
         </div>
+
         <div class="footer-bottom">
             © 2025 Golden Horizon. All rights reserved.
         </div>

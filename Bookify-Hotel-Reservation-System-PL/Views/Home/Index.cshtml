@@ -7,37 +7,16 @@
 }
 
 @section Hero {
-    <section class="hero-section" style="background-image: url('https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=1920&q=80');">
-        <div class="hero-overlay"></div>
-        <div class="relative z-10 px-4">
+    <section class="hero-section">
+        <div class="hero-content">
             <h1>Welcome to Golden Horizon</h1>
-            <p>Experience luxury, comfort, and breathtaking views in paradise</p>
-            <a asp-controller="Room" asp-action="Index" >Go To Our Rooms</a>
+            <p>Experience luxury and comfort views in paradise</p>
+            <a href="rooms.html" class="hero-login-btn">Go To Our Rooms</a>
         </div>
     </section>
 }
 
 
 @section Scripts {
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-          const userSection = document.getElementById("user-section");
-          const username = localStorage.getItem("username");
-
-          if (username) {
-            userSection.innerHTML = `
-              <div class="flex items-center space-x-3 text-[#e5e3df]">
-                <i class="fa-solid fa-user text-[#cbb58f] text-lg"></i>
-                <span class="font-medium">${username}</span>
-                <button id="logout-btn" class="ml-3 text-sm text-[#cbb58f] hover:underline">Logout</button>
-              </div>
-            `;
-
-            document.getElementById("logout-btn").addEventListener("click", () => {
-              localStorage.removeItem("username");
-              location.reload();
-            });
-          }
-        });
-    </script>
+    <script src="js/Home.js"></script>
 }
