@@ -17,8 +17,9 @@ builder.Services.AddDbContext<BookifyDbContext>(options =>
 
 
 builder.Services.AddScoped<IRoomRepository , RoomRepository>();
+builder.Services.AddScoped<IBookingRepository, BookingRepository>();
 
-    var app = builder.Build();
+var app = builder.Build();
 
     // Configure the HTTP request pipeline.
     if (!app.Environment.IsDevelopment())

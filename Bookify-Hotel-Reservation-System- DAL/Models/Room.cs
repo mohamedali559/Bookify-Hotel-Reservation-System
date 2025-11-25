@@ -14,11 +14,11 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
 
         [Required]
         [MaxLength(10)]
-        public string RoomNumber { get; set; }
+        public string? RoomNumber { get; set; }
         public int Floor { get; set; }
 
         [MaxLength(300)]
-        public string Description { get; set; }
+        public string? Description { get; set; }
         public bool IsAvailable { get; set; }
 
         [Required]
@@ -27,7 +27,7 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
 
         [Required]
         public int RoomTypeId { get; set; }
-        public RoomType RoomType { get; set; }
+        public RoomType? RoomType { get; set; }
 
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<RoomAmenity> RoomAmenities { get; set; }
