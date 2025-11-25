@@ -33,7 +33,7 @@ namespace Bookify_Hotel_Reservation_System_BLL.Repositories
             return true;
         }
 
-        public Room Get(int id)
+        public Room? Get(int id)
         {
             return _Context.Rooms.FirstOrDefault(r => r.Id == id);
         }
