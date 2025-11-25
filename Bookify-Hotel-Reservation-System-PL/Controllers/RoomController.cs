@@ -10,7 +10,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         {
             _roomRepository = roomRepository;
         }
-        public IActionResult Room_Index()
+        public IActionResult Index()
         {
             var rooms = _roomRepository.GetAll();
             return View(rooms);
