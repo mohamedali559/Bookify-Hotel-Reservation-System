@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Amenity>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<a asp-action="Add" class="btn btn-primary">Add</a>
+@if (Model.Any())
+{
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Amenity ID</th>
+                <th>Amenity Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var amenity in Model)
+            {
+                <tr>
+                    <td>@amenity.Id</td>
+                    <td>@amenity.Name</td>
+                    <td>@amenity.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-danger">
+        No Reviews found
+    </div>
+}
+

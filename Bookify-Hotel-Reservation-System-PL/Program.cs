@@ -18,6 +18,8 @@ builder.Services.AddDbContext<BookifyDbContext>(options =>
 
 builder.Services.AddScoped<IRoomRepository , RoomRepository>();
 builder.Services.AddScoped<IBookingRepository, BookingRepository>();
+builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
+builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
 var app = builder.Build();
 

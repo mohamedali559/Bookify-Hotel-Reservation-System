@@ -1,5 +1,4 @@
 ﻿using Bookify_Hotel_Reservation_System__DAL.Models;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace Bookify_Hotel_Reservation_System_BLL.Interfaces
 {
-    public interface IBookingRepository
+    public interface IReviewRepository
     {
-        IEnumerable<Booking> GetAll();
-        IEnumerable<Booking> GetAllWithRoomsAndUser();
-        
-        void Add(Booking booking);
+        IEnumerable<Review> GetAll();
+        public IEnumerable<Review> GetAllWithUsers();
+        void Add(Review review);
 
-        Booking? Get(int id);
+        Review? Get(int id);
 
-        Booking Update(Booking booking);
+        Review Update(Review review);
 
         bool Delete(int id);
-
         public void Save();
     }
 }

@@ -84,9 +84,6 @@ namespace Bookify_Hotel_Reservation_System__DAL.Contexts
             .Property(rt => rt.BasePrice)
             .HasColumnType("decimal(18,2)");
 
-            modelBuilder.Entity<Room>()
-                .Property(r => r.PricePerDay)
-                .HasColumnType("decimal(18,2)");
 
             modelBuilder.Entity<Booking>()
                 .Property(b => b.Price)
