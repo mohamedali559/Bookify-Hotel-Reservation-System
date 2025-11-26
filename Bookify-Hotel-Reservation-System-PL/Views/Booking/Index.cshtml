@@ -10,7 +10,7 @@
         <thead>
             <tr>
                 <th>Booking ID</th>
-                @* <th>User</th> *@
+                <th>User Name</th>
                 <th>Room Number</th>
                 <th>Room Type</th>
                 <th>Room Description</th>
@@ -26,10 +26,9 @@
             {
                 <tr>
                     <td>@booking.Id</td>
-                    @* <td>@booking.User.FullName</td> *@
-                    <td>@booking.Room.RoomNumber</td>
-                    <td>@booking.Room.RoomTypeId</td>
-                    <td>@booking.Room.Description</td>
+                    <td>@booking.User.FullName</td>
+                    <td>@booking.Room.RoomType.Name/td>
+                    @* <td>@booking.Room.</td> *@
                     <td>@booking.CheckInDate.ToShortDateString()</td>
                     <td>@booking.CheckOutDate.ToShortDateString()</td>
                     <td>@booking.Price.ToString("C")</td>
