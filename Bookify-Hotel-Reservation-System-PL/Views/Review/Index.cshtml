@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Review>
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+@if (Model.Any())
+{
+    <table class="table table-bordered table-hover table-responsive">
+        <thead>
+            <tr>
+                <th>Review ID</th>
+                <th>User Name</th>
+                <th>Rate</th>
+                <th>Description</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var review in Model)
+            {
+                <tr>
+                    <td>@review.Id</td>
+                    <td>@review.User.FullName</td>
+                    <td>@review.Rate</td>
+                    <td>@review.Description</td>
+                    <td>@review.CreatedAt.ToShortDateString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-danger">
+        No Reviews found
+    </div>
+}
+

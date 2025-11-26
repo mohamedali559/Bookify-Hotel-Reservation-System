@@ -4,16 +4,20 @@
     ViewData["Title"] = "Bookings Index";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/BookingStyle.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+}
+
 @if (Model.Any())
 {
     <table class="table table-bordered table-hover table-responsive">
         <thead>
             <tr>
                 <th>Booking ID</th>
-                <th>User Name</th>
-                <th>Room Number</th>
+                <th>Full Name</th>
                 <th>Room Type</th>
-                <th>Room Description</th>
+                <th>Room Number</th>
                 <th>Check-In</th>
                 <th>Check-Out</th>
                 <th>Price</th>
@@ -27,8 +31,11 @@
                 <tr>
                     <td>@booking.Id</td>
                     <td>@booking.User.FullName</td>
-                    <td>@booking.Room.RoomType.Name/td>
-                    @* <td>@booking.Room.</td> *@
+                    <td>@booking.Room.RoomTypeId</td>
+                    <td>@booking.Room.RoomNumber</td>
+                    <td>@booking.Room.Description</td>
+                    <td>@booking.Room.Description</td>
+                    <td>@booking.Room.Description</td>
                     <td>@booking.CheckInDate.ToShortDateString()</td>
                     <td>@booking.CheckOutDate.ToShortDateString()</td>
                     <td>@booking.Price.ToString("C")</td>

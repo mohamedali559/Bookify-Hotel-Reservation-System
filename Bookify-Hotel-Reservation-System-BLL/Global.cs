@@ -1,0 +1,9 @@
+﻿global using Bookify_Hotel_Reservation_System__DAL.Models;
+global using Bookify_Hotel_Reservation_System_BLL.Interfaces;
+global using Bookify_Hotel_Reservation_System__DAL.Contexts;
+global using Microsoft.EntityFrameworkCore;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;

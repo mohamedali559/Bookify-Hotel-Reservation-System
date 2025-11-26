@@ -9,12 +9,14 @@ namespace Bookify_Hotel_Reservation_System_BLL.Interfaces
     public interface IRoomRepository
     {
         IEnumerable<Room> GetAll();
-        Room Add(Room room);
+        void Add(Room room);
       
         Room? Get(int id);
 
         Room Update(Room room);
 
         bool Delete(int id);
+
+        public void Save();
     }
 }
