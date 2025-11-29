@@ -28,4 +28,8 @@
     <ProjectReference Include="..\Bookify-Hotel-Reservation-System-BLL\Bookify-Hotel-Reservation-System-BLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\Rooms\" />
+  </ItemGroup>
+
 </Project>
