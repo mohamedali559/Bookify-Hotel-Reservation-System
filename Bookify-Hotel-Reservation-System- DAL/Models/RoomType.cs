@@ -17,6 +17,8 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
 
         [MaxLength(300)]
         public string Description { get; set; }
+        public decimal Area { get; set; }
+        public int Guests { get; set; }
 
         [Range(0, 999999)]
         public decimal BasePrice { get; set; }
