@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Room>
+﻿@model List<RoomDetailsViewModel>
 
 @{
     ViewData["Title"] = "Rooms";
@@ -6,6 +6,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/RoomsStyle.css" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 }
 
 <!-- Toast & Cart -->
@@ -65,7 +66,7 @@
 </div>
 
 <!-- Rooms Container -->
-<div id="rooms-container">
+@* <div id="rooms-container">
     <div class="room-card" data-type="Suite">
         <img src="https://plus.unsplash.com/premium_photo-1661901997525-fdbfb88d8554?w=600" alt="Ocean View Suite">
         <div class="room-info">
@@ -83,6 +84,29 @@
             </div>
         </div>
     </div>
+</div> *@
+<div id="rooms-container">
+    @foreach (var room in Model)
+    {
+        <div class="room-card">
+            <img src="@room.ImageUrl" alt="@room.RoomTypeName">
+            <div class="room-info">
+                <h3>@room.RoomTypeName</h3>
+                <p>@room.RoomDescription</p>
+                <div class="features">
+                    <span><i class="fas fa-bed"></i> @room.Guests Guests</span>
+                    <span>@room.Area m²</span>
+                    <span>$@room.BasePrice</span>
+                </div>               
+                <div class="room-buttons">
+                    <button class="add-cart">Add to Cart</button>
+                    <a asp-controller="Rooms" asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-primary view-details">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
 @section Scripts {
