@@ -46,6 +46,12 @@ namespace Bookify_Hotel_Reservation_System_BLL.Repositories
                             .Include(r => r.RoomAmenities)
                             .ThenInclude(ra => ra.Amenity);
         }
+        public Room GetAllWithAmenitiesAndRoomTypeById(int id)
+        {
+            return _Context.Rooms.Include(r => r.RoomType)
+                            .Include(r => r.RoomAmenities)
+                            .ThenInclude(ra => ra.Amenity).FirstOrDefault(r => r.Id == id);
+        }
         public void Save()
         {
             _Context.SaveChanges();
