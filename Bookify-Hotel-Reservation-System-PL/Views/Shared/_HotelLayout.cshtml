@@ -13,13 +13,16 @@
 
 <body>
     <nav class="navbar">
-        <div class="navbar-container">
-            <div class="logo-section">
+        <div class="container navbar-container d-flex justify-content-between align-items-center w-100">
+
+            <!-- Logo -->
+            <div class="logo-section d-flex align-items-center gap-2">
                 <div class="logo-box">GH</div>
                 <h1 class="logo-text">Golden Horizon</h1>
             </div>
 
-            <div class="nav-links" id="nav-links">
+            <!-- Nav Links -->
+            <div class="nav-links d-flex align-items-center gap-3" id="nav-links">
                 <a asp-controller="Home" asp-action="Index">Home</a>
                 <a asp-controller="Room" asp-action="Index">Rooms</a>
                 <a asp-controller="Amenity" asp-action="Index">Amenities</a>
@@ -28,15 +31,20 @@
                 <a asp-controller="Contact" asp-action="Index">Contact</a>
 
             </div>
-            <div class="hamburger" id="hamburger">
+
+            <!-- Hamburger (mobile) -->
+            <div class="hamburger d-md-none" id="hamburger">
                 <i class="fas fa-bars"></i>
             </div>
 
-            <div class="user-section" id="user-section">
-                <a asp-controller="Login" asp-action="Login">Log In</a>
+            <!-- User Section -->
+            <div class="user-section d-flex gap-2" id="user-section">
+                <a asp-controller="Account" asp-action="Login">Log In</a>
             </div>
+
         </div>
     </nav>
+
 
     <!-- HERO SECTION OUTSIDE ANY CONTAINER -->
     @RenderSection("Hero", required: false)
