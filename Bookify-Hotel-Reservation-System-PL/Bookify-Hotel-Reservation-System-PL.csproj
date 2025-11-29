@@ -21,8 +21,4 @@
     <ProjectReference Include="..\Bookify-Hotel-Reservation-System-BLL\Bookify-Hotel-Reservation-System-BLL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModel\" />
-  </ItemGroup>
-
 </Project>
