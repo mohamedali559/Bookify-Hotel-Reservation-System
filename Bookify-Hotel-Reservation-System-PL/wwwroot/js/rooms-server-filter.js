@@ -57,25 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
         setTimeout(() => toast.style.display = "none", 1500);
     }
 
-    function extractRoomData(card) {
-        return {
-            name: card.querySelector("h3").innerText,
-            description: card.querySelector("p").innerText,
-            beds: parseInt(card.querySelector(".fa-bed")?.parentNode.textContent.replace(/\D/g, "")) || 0,
-            guests: parseInt(card.querySelector(".fa-user-friends")?.parentNode.textContent.replace(/\D/g, "")) || 0,
-            size: card.querySelectorAll(".features span")[2]?.innerText || "",
-            price: parseInt(card.querySelectorAll(".features span")[3]?.innerText.replace('$', '')) || 0,
-            type: card.dataset.type ?? "",
-            image: card.querySelector("img")?.src || "",  // ? ??? ???? ??????
-            element: card
-        };
-    }
-
-    function addToCart(card) {
-        const room = extractRoomData(card);
-        cart.push(room);
+    function addToCart(roomData) {
+        cart.push(roomData);
         document.getElementById('cart-count').textContent = cart.length;
-        showToast(`${room.name} added to cart`);
+        showToast(`${roomData.roomTypeName} added to cart`);
     }
 
     function removeFromCart(index) {
@@ -99,10 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const div = document.createElement('div');
             div.className = "cart-item";
             div.innerHTML = `
-                <img src="${room.image}" alt="${room.name}" style="width:60px;height:50px;object-fit:cover;margin-right:10px;">
-                <strong>${room.name}</strong> - $${room.price}
+                <img src="${room.imageUrl}" alt="${room.roomTypeName}" style="width:60px;height:50px;object-fit:cover;margin-right:10px;">
+                <strong>${room.roomTypeName}</strong> - $${room.basePrice}
                 <br>
-                Guests: ${room.guests}, Beds: ${room.beds}
+                Guests: ${room.guests}, Area: ${room.area} m²
                 <button onclick="removeFromCart(${i})" class="cart-remove">Remove</button>
             `;
             container.appendChild(div);
@@ -121,18 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ===========================
-       ROOM CARDS + DETAILS POPUP
+       ROOM DETAILS POPUP
     ============================ */
-    let rooms = Array.from(document.querySelectorAll(".room-card")).map(card => extractRoomData(card));
-
-    rooms.forEach(r => {
-        r.element.querySelector(".add-cart")?.addEventListener("click", () => addToCart(r.element));
-        r.element.querySelector(".view-details")?.addEventListener("click", () => showRoomDetails(r.element));
-    });
-
-    function showRoomDetails(card) {
-        const room = extractRoomData(card);
-
+    function showRoomDetails(room) {
         let popup = document.getElementById("room-popup");
         if (!popup) {
             popup = document.createElement("div");
@@ -143,17 +119,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
         popup.innerHTML = `
             <div class="details-card">
-                <img src="${room.image}" alt="${room.name}">
-                <h2>${room.name}</h2>
-                <p>${room.description}</p>
+                <img src="${room.imageUrl}" alt="${room.roomTypeName}">
+                <h2>${room.roomTypeName}</h2>
+                <p>${room.roomDescription}</p>
                 <div class="extra-info">
                     <p><strong>Breakfast:</strong> Included</p>
                     <p><strong>WiFi:</strong> Free high-speed internet</p>
                     <p><strong>Cancellation:</strong> Free within 24 hours</p>
                     <p><strong>Check-in:</strong> 2 PM</p>
                     <p><strong>Check-out:</strong> 11 AM</p>
-                    <p><strong>Room Size:</strong> ${room.size}</p>
-                    <p><strong>Price:</strong> $${room.price}</p>
+                    <p><strong>Room Size:</strong> ${room.area} m²</p>
+                    <p><strong>Price:</strong> $${room.basePrice}</p>
+                    <p><strong>Guests:</strong> ${room.guests}</p>
+                    <p><strong>Floor:</strong> ${room.floor}</p>
                 </div>
                 <div class="room-buttons">
                     <button class="add-cart-popup">Add to Cart</button>
@@ -165,7 +143,8 @@ document.addEventListener("DOMContentLoaded", () => {
         popup.style.display = "flex";
 
         popup.querySelector(".add-cart-popup").addEventListener("click", () => {
-            addToCart(card);
+            addToCart(room);
+            popup.style.display = "none";
         });
 
         popup.querySelector(".close-details-btn").addEventListener("click", () => {
@@ -174,70 +153,103 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     /* ===========================
-       FILTERS
+       FILTERS & ROOM RENDERING
     ============================ */
 
-    document.addEventListener("DOMContentLoaded", () => {
+    // Apply Filters (Call Server)
+    async function applyFilters() {
+        const search = document.getElementById("search-room").value.trim();
+        const type = document.getElementById("room-type").value;
+        const guests = document.getElementById("guests").value;
+        const price = document.getElementById("price-select").value;
 
-        // Apply Filters (Call Server)
-        async function applyFilters() {
-            const search = document.getElementById("search-room").value;
-            const type = document.getElementById("room-type").value;
-            const guests = document.getElementById("guests").value;
-            const price = document.getElementById("price-select").value;
+        const params = new URLSearchParams();
+        if (search) params.append('search', search);
+        if (type) params.append('type', type);
+        if (guests) params.append('guests', guests);
+        if (price) params.append('price', price);
 
-            const url = `/Room/Filter?search=${search}&type=${type}&guests=${guests}&price=${price}`;
+        const url = `/Room/Filter?${params.toString()}`;
 
-            const container = document.getElementById("rooms-container");
-            container.innerHTML = "<p class='loading-message'>Loading...</p>";
+        const container = document.getElementById("rooms-container");
+        container.innerHTML = "<p class='loading-message'>Loading...</p>";
 
+        try {
             const response = await fetch(url);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
             const rooms = await response.json();
-
             renderRooms(rooms);
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+            container.innerHTML = "<p class='error-message'>Error loading rooms. Please try again.</p>";
+        }
+    }
+
+    // Render Rooms
+    function renderRooms(rooms) {
+        const container = document.getElementById("rooms-container");
+        container.innerHTML = "";
+
+        if (rooms.length === 0) {
+            container.innerHTML = "<p class='loading-message'>No rooms found matching your criteria.</p>";
+            return;
         }
 
-        // Render Rooms
-        function renderRooms(rooms) {
-            const container = document.getElementById("rooms-container");
-            container.innerHTML = "";
-
-            if (rooms.length === 0) {
-                container.innerHTML = "<p>No rooms found.</p>";
-                return;
-            }
-
-            rooms.forEach(room => {
-                container.innerHTML += `
-                <div class="room-card">
-                    <img src="${room.imageUrl}" alt="${room.roomTypeName}">
-                    <div class="room-info">
-                        <h3>${room.roomTypeName}</h3>
-                        <p>${room.roomDescription}</p>
-                        <div class="features">
-                            <span><i class="fas fa-bed"></i> ${room.guests} Guests</span>
-                            <span>${room.area} m²</span>
-                            <span>$${room.basePrice}</span>
-                        </div>
-
-                        <div class="room-buttons">
-                            <button class="add-cart">Add to Cart</button>
-
-                            <a href="/Room/Details/${room.roomId}"
-                               class="btn btn-primary view-details">
-                                View Details
-                            </a>
-                        </div>
+        rooms.forEach(room => {
+            const roomCard = document.createElement('div');
+            roomCard.className = 'room-card';
+            roomCard.innerHTML = `
+                <img src="${room.imageUrl}" alt="${room.roomTypeName}">
+                <div class="room-info">
+                    <h3>${room.roomTypeName}</h3>
+                    <p>${room.roomDescription}</p>
+                    <div class="features">
+                        <span><i class="fas fa-user-friends"></i> ${room.guests} Guests</span>
+                        <span><i class="fas fa-vector-square"></i> ${room.area} m²</span>
+                        <span><i class="fas fa-layer-group"></i> Floor ${room.floor}</span>
+                        <span><i class="fas fa-dollar-sign"></i> $${room.basePrice}</span>
+                    </div>
+                    <div class="room-buttons">
+                        <button class="add-cart">Add to Cart</button>
+                        <button class="view-details">View Details</button>
                     </div>
                 </div>
             `;
-            });
+            
+            // Add event listeners
+            roomCard.querySelector('.add-cart').addEventListener('click', () => addToCart(room));
+            roomCard.querySelector('.view-details').addEventListener('click', () => showRoomDetails(room));
+            
+            container.appendChild(roomCard);
+        });
+    }
+
+    // Load all rooms initially
+    async function loadAllRooms() {
+        const container = document.getElementById("rooms-container");
+        container.innerHTML = "<p class='loading-message'>Loading all rooms...</p>";
+
+        try {
+            const response = await fetch('/Room/GetAllRooms');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const rooms = await response.json();
+            renderRooms(rooms);
+        } catch (error) {
+            console.error('Error fetching all rooms:', error);
+            container.innerHTML = "<p class='error-message'>Error loading rooms. Please try again.</p>";
         }
+    }
 
-        // Events
-        document.getElementById("search-room").addEventListener("input", applyFilters);
-        document.getElementById("room-type").addEventListener("change", applyFilters);
-        document.getElementById("guests").addEventListener("change", applyFilters);
-        document.getElementById("price-select").addEventListener("change", applyFilters);
-    });
+    // Filter Events
+    document.getElementById("search-room").addEventListener("input", applyFilters);
+    document.getElementById("room-type").addEventListener("change", applyFilters);
+    document.getElementById("guests").addEventListener("change", applyFilters);
+    document.getElementById("price-select").addEventListener("change", applyFilters);
 
+    // Load all rooms on page load
+    loadAllRooms();
+});
