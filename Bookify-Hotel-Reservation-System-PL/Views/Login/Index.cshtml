@@ -1,0 +1,82 @@
+﻿@{
+    ViewData["Title"] = "Golden Horizon - Login";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/login.css">
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo-section">
+                <div class="logo-box">GH</div>
+                <h1 class="logo-text">Golden Horizon</h1>
+            </div>
+            <div class="nav-links" id="nav-links">
+                <a href="~/Home">Home</a>
+                <a href="~/Rooms">Rooms</a>
+                <a href="~/Amenities">Amenities</a>
+                <a href="~/Gallery">Gallery</a>
+                <a href="~/About">About</a>
+                <a href="~/Contact">Contact</a>
+            </div>
+            <div class="user-section" id="user-section">
+                <a href="~/Login">Log In</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login/Register Card -->
+    <div class="login-wrapper">
+        <div class="login-card" id="loginCard">
+            <h2 id="formTitle">Welcome Back</h2>
+
+            <!-- Login Form -->
+            <form id="loginForm">
+                <input type="text" id="username" placeholder="Username" required>
+                <input type="password" id="password" placeholder="Password" required>
+                <select id="loginType">
+                    <option value="user" selected>User</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button type="submit" class="login-btn">Log In</button>
+                <div class="extra-options">
+                    <p><a href="#" id="forgotPass">Forgot Password?</a></p>
+                    <p>Don't have an account? <a href="#" id="createAcc">Create one</a></p>
+                </div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="hidden">
+                <input type="text" id="newName" placeholder="Full Name" required>
+                <input type="email" id="newEmail" placeholder="Email Address" required>
+                <input type="password" id="newPass" placeholder="Password" required>
+                <select id="registerType">
+                    <option value="user" selected>User</option>
+                    <option value="admin">Admin</option>
+                </select>
+                <button type="submit" class="login-btn">Create Account</button>
+                <div class="extra-options">
+                    <p>Already have an account? <a href="#" id="goLogin">Login here</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/js/login.js"></script>
+</body>
+</html>

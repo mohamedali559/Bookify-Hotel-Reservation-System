@@ -1,0 +1,104 @@
+    body { 
+      background-color: #0d1b2a; 
+      color: #e0e7ff; 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    }
+    h2.section-title { 
+      color: #4dabf7; 
+      margin-bottom: 20px; 
+      font-weight: bold; 
+    }
+    .card { 
+      background-color: #1b263b; 
+      border-radius: 12px; 
+      padding: 20px; 
+      margin-bottom: 40px; 
+    }
+    .btn-primary { 
+      background-color: #4dabf7; 
+      border: none; 
+      color: #0d1b2a; 
+      transition: all 0.3s ease; 
+      margin-right: 50px;
+    }
+    .btn-primary:hover { 
+      background-color: #74c0fc; 
+      color: #0d1b2a; 
+      transform: translateY(-2px); 
+    }
+    .btn-secondary { 
+      background-color: #1b3b5c; 
+      border: none; 
+      color: #4dabf7; 
+    }
+    .btn-secondary:hover { 
+      background-color: #4dabf7; 
+      color: #0d1b2a; 
+    }
+    .dataTables_wrapper .dataTables_filter input,
+    .dataTables_wrapper .dataTables_length select { 
+      background-color: #0d1b2a; 
+      color: #e0e7ff; 
+      border: 1px solid #4dabf7; 
+      border-radius: 5px; 
+      padding: 5px 10px; 
+    }
+    table.dataTable thead th { 
+      background-color: #1b263b; 
+      color: #4dabf7; 
+    }
+    table.dataTable tbody td { 
+      color: #cfd8ff; 
+    }
+    .stats-container { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 20px; 
+      margin-bottom: 40px; 
+    }
+    .stat-card { 
+      flex: 1; 
+      min-width: 200px; 
+      background: linear-gradient(135deg, #1b263b, #1d3557); 
+      border-radius: 15px; 
+      padding: 25px 20px; 
+      text-align: center; 
+      transition: all 0.3s ease; 
+      cursor: pointer; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+    }
+    .stat-card:hover { 
+      transform: translateY(-8px); 
+      box-shadow: 0 12px 20px rgba(77,171,247,0.4); 
+      background: linear-gradient(135deg, #1d3557, #23395d); 
+    }
+    .stat-card h3 { 
+      color: #4dabf7; 
+      margin-bottom: 12px; 
+      font-size: 1.2rem; 
+      font-weight: 700; 
+    }
+    .stat-card p { 
+      color: #e0e7ff; 
+      margin: 0; 
+      font-size: 1.4rem; 
+      font-weight: 600; 
+    }
+    .section-nav { 
+      margin-bottom: 30px; 
+      text-align: center; 
+    }
+    .section-nav a { 
+      margin: 0 10px; 
+      text-decoration: none; 
+      color: #4dabf7; 
+      font-weight: 600; 
+    }
+    .section-nav a:hover { 
+      color: #74c0fc; 
+    }
+
+    @media (max-width:768px){ 
+      .stats-container { flex-direction: column; } 
+    }
+  

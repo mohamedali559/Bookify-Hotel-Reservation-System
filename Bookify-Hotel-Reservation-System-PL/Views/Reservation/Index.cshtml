@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Reservation";
+   
+}
+
+
+<!-- Reservation Section -->
+<div class="section-header mt-24 text-center">
+    <h2 class="text-3xl font-bold mb-2">Your Reservation</h2>
+    <div class="divider mx-auto mb-4"></div>
+    <p>Here are the rooms you selected. You can proceed to book or remove them.</p>
+</div>
+
+<div id="reservation-container" style="max-width:1280px;margin:0 auto;padding:20px;display:grid;grid-template-columns:repeat(4,1fr);gap:20px;">
+    <!-- Reservation cards will be rendered here -->
+</div>
+
+<!-- Back to Rooms Button -->
+<div style="max-width:1280px;margin:20px auto;display:flex;justify-content:end;">
+    <button onclick="backToRooms()" class="room-buttons" style="padding:12px 25px;font-size:16px;background:#2563eb; color: white; cursor: pointer; margin-right: 40px;">
+        Back to Rooms
+    </button>
+</div>
+
+<div id="toast" class="fixed bottom-5 right-5 bg-blue-600 text-white px-5 py-3 rounded-lg shadow-lg opacity-0 transform translate-y-6 transition-all duration-300">
+    Booking Confirmed!
+</div>
+
+@section Scripts {
+    <script src="~/js/reservation.js"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/RoomsStyle.css" />
+}

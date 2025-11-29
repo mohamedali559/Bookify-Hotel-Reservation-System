@@ -8,13 +8,6 @@
     <link rel="stylesheet" href="~/css/RoomsStyle.css" />
 }
 
-
-
-
-
-
-
-
 <!-- Toast & Cart -->
 <div class="cart" id="main-cart">
     <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
@@ -60,16 +53,20 @@
         </select>
     </div>
     <div>
-        <label for="price-range">Max Price: <span id="price-value">500</span>$</label>
-        <input type="range" id="price-range" min="0" max="500" value="500">
-    </div>
+        <label for="price-select">Max Price: </label>
+        <select id="price-select">
+            <option value="100-200">$100 - $200</option>
+            <option value="200-300">$200 - $300</option>
+            <option value="300-400">$300 - $400</option>
+            <option value="400-500">$400 - $500</option>
+        </select>
 
+    </div>
 </div>
 
 <!-- Rooms Container -->
 <div id="rooms-container">
-
-    <div class="room-card">
+    <div class="room-card" data-type="Suite">
         <img src="https://plus.unsplash.com/premium_photo-1661901997525-fdbfb88d8554?w=600" alt="Ocean View Suite">
         <div class="room-info">
             <h3>Ocean View Suite</h3>
@@ -82,75 +79,12 @@
             </div>
             <div class="room-buttons">
                 <button class="add-cart">Add to Cart</button>
+                <button class="view-details">View Details</button>
             </div>
         </div>
     </div>
-
 </div>
 
 @section Scripts {
     <script src="js/rooms.js"></script>
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@* 
-
-
-
-@if (Model.Count()>0)
-{
-    <table class="table table-bordered table-hover table-responsive">
-        <thead>
-            <tr>
-                <th>Room Number</th>
-                <th>Room Type ID</th>
-                <th>Room Description</th>
-                <th>Price per Day</th>
-                <th>Is Available</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach(var room in Model)
-            {
-                <tr>
-                        <td>@room.RoomNumber</td>
-                        <td>@room.RoomTypeId</td>
-                        <td>@room.Description</td>
-                        <td>@room.PricePerDay</td>
-                        <td>@room.IsAvailable</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    
-}
-else
-{
-    <div class="alert alert-danger">
-        No rooms
-    </div>
-} *@

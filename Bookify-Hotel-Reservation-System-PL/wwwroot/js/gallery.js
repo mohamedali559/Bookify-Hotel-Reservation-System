@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
   } else {
-    userSection.innerHTML = `
+      userSection.innerHTML = `
       <a href="/login">Log In</a>
     `;
   }
