@@ -5,10 +5,6 @@
 }
 
 @section Styles {
-           
-
-        /* Responsive adjustments */
-   
     <link rel="stylesheet" href="~/css/RoomsStyle.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 }
@@ -32,133 +28,150 @@
 </div>
 
 <!-- Filters Section -->
-<form asp-action="Index" asp-controller="Room" method="post" class="filters-container" style="display:flex; gap:15px; flex-wrap:wrap; margin-bottom:20px;">
-    <!-- Search -->
-    <div class="filter-item" style="flex:1; min-width:180px;">
-        <label for="search-room">Search Room</label>
-        <input type="text" name="SearchText" id="search-room" placeholder="Enter keyword..."
-               value="@(ViewData["SearchText"] ?? "")" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;" />
-    </div>
-<<<<<<< HEAD
-    <div>
-        <label for="room-type">Room type</label>
-        <select id="room-type">
-            <option value="">All Types</option>
-            <option value="Superior">Superior</option>
-            <option value="Deluxe">Deluxe</option>
-            <option value="Suite">Suite</option>
-            <option value="Family">Family</option>
-        </select>
-    </div>
-    <div>
-        <label for="guests">Guests</label>
-        <select id="guests">
-            <option value="">Any</option>
-            <option value="1">1 Guest</option>
-            <option value="2">2 Guests</option>
-            <option value="3">3 Guests</option>
-            <option value="4">4 Guests</option>
-        </select>
-    </div>
-    <div>
-        <label for="price-select">Max Price: </label>
-        <select id="price-select">
-            <option value="">Any</option>
-            <option value="800-1000">$800 - $1000</option>
-            <option value="1000-2000">$1000 - $2000</option>
-            <option value="3000-4000">$3000 - $4000</option>
-            <option value="4000-5000">$4000 - $5000</option>
-=======
+<div style="max-width: 1280px; margin: 0 auto; padding: 0 20px;">
+    <div class="filters-container">
+        <!-- Search -->
+        <div class="filter-item">
+            <label for="search-room">Search Room</label>
+            <input type="text" name="searchText" id="search-room" placeholder="Enter keyword..."
+                   value="@(ViewData["SearchText"] ?? "")" />
+        </div>
 
-    <!-- Room Type -->
-    <div class="filter-item" style="flex:1; min-width:180px;">
-        <label for="room-type">Room Type</label>
-        <select id="room-type" name="roomType" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
-            <option value="">Any</option>
-            @foreach (var type in ViewBag.RoomTypeName)
-            {
-                if ((ViewData["RoomType"]?.ToString() ?? "") == type)
+        <!-- Room Type -->
+        <div class="filter-item">
+            <label for="room-type">Room Type</label>
+            <select id="room-type" name="roomType">
+                <option value="">Any</option>
+                @if (ViewBag.RoomTypeName != null)
                 {
-                    <option value="@type" selected>@type</option>
+                    @foreach (var type in ViewBag.RoomTypeName)
+                    {
+                        if ((ViewData["RoomType"]?.ToString() ?? "") == type)
+                        {
+                            <option value="@type" selected>@type</option>
+                        }
+                        else
+                        {
+                            <option value="@type">@type</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Guests -->
+        <div class="filter-item">
+            <label for="guests">Guests</label>
+            <select id="guests" name="guests">
+                <option value="">Any</option>
+                @for (int i = 1; i <= 4; i++)
+                {
+                    if ((ViewData["Guests"]?.ToString() ?? "") == i.ToString())
+                    {
+                        <option value="@i" selected>@i Guest@(i > 1 ? "s" : "")</option>
+                    }
+                    else
+                    {
+                        <option value="@i">@i Guest@(i > 1 ? "s" : "")</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <!-- Price -->
+        <div class="filter-item">
+            <label for="price-select">Max Price</label>
+            <select id="price-select" name="price">
+                <option value="">Any</option>
+                @{
+                    var selectedPrice = ViewData["Price"]?.ToString() ?? "";
+                }
+                @if (selectedPrice == "800-1000")
+                {
+                    <option value="800-1000" selected>$800 - $1000</option>
                 }
                 else
                 {
-                    <option value="@type">@type</option>
+                    <option value="800-1000">$800 - $1000</option>
                 }
-            }
->>>>>>> 326d8e20421d4f00ead55a5a95ec83a2eadec5d8
-        </select>
-    </div>
-
-    <!-- Guests -->
-    <div class="filter-item" style="flex:1; min-width:180px;">
-        <label for="guests">Guests</label>
-        <select id="guests" name="guests" style="width:100%; padding:8px; border-radius:6px; border:1px solid #ccc;">
-            <option value="">Any</option>
-            @for (int i = 1; i <= 4; i++)
-            {
-                if ((ViewData["Guests"]?.ToString() ?? "") == i.ToString())
+                @if (selectedPrice == "1000-2000")
                 {
-                    <option value="@i" selected>@i Guest@(i > 1 ? "s" : "")</option>
+                    <option value="1000-2000" selected>$1000 - $2000</option>
                 }
                 else
                 {
-                    <option value="@i">@i Guest@(i > 1 ? "s" : "")</option>
+                    <option value="1000-2000">$1000 - $2000</option>
                 }
-            }
-        </select>
-    </div>
+                @if (selectedPrice == "2000-3000")
+                {
+                    <option value="2000-3000" selected>$2000 - $3000</option>
+                }
+                else
+                {
+                    <option value="2000-3000">$2000 - $3000</option>
+                }
+                @if (selectedPrice == "3000-5000")
+                {
+                    <option value="3000-5000" selected>$3000 - $5000</option>
+                }
+                else
+                {
+                    <option value="3000-5000">$3000 - $5000</option>
+                }
+            </select>
+        </div>
 
-    <!-- Price -->
-    <div class="filter-item" style="flex:1; min-width:180px;">
-        <label for="price-select">Max Price: </label>
-        <select id="price-select"> 
-            <option value="">Any</option> 
-            <option value="100-999">$100 - $999</option> 
-            <option value="1000-1999">$1000 - $1999</option> 
-            <option value="2000-2999">$2000 - $2999</option> 
-            <option value="3000-9999">$3000 - $More</option> 
-        </select>
+        <!-- Reset Button -->
+        <div class="filter-item filter-submit">
+            <button type="button" id="reset-filters" style="background: linear-gradient(135deg, #6c757d, #5a6268); color: #fff; border: none; padding: 12px 25px; border-radius: 10px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%;">
+                Reset Filters
+            </button>
+        </div>
+    </div>
 </div>
 
-<<<<<<< HEAD
 <!-- Rooms Container -->
 <div id="rooms-container">
-    <p class="loading-message">Loading rooms...</p>
-=======
-    <!-- Submit -->
-    <div class="filter-item filter-submit" style="align-self:flex-end;">
-        <input type="submit" value="Search Rooms" style="background-color:darkolivegreen; color:antiquewhite; padding:10px 25px; border:none; border-radius:8px; cursor:pointer; font-weight:600;" />
-    </div>
-</form>
-
-
-
-<div id="rooms-container">
-    @foreach (var room in Model)
+    @if (Model != null && Model.Any())
     {
-        <div class="room-card">
-            <img src="@room.ImageUrl" alt="@room.RoomTypeName">
-            <div class="room-info">
-                <h3>@room.RoomTypeName</h3>
-                <p>@room.RoomDescription</p>
-                <div class="features">
-                    <span><i class="fas fa-bed"></i> @room.Guests Guests</span>
-                    <span>@room.Area m²</span>
-                    <span>$@room.BasePrice</span>
-                </div>               
-                <div class="room-buttons">
-                    <button class="add-cart">Add to Cart</button>
-                    <a asp-controller="Room" asp-action="Details" asp-route-id="@room.RoomId" class="btn btn-primary view-details">
-                        View Details
-                    </a>
+        @foreach (var room in Model)
+        {
+            <div class="room-card">
+                <img src="@room.ImageUrl" alt="@room.RoomTypeName">
+                <div class="room-info">
+                    <h3>@room.RoomTypeName</h3>
+                    <p>@room.RoomDescription</p>
+                    <div class="features">
+                        <span><i class="fas fa-user-friends"></i> @room.Guests Guests</span>
+                        <span><i class="fas fa-vector-square"></i> @room.Area m²</span>
+                        <span><i class="fas fa-layer-group"></i> Floor @room.Floor</span>
+                        <span><i class="fas fa-dollar-sign"></i> $@room.BasePrice</span>
+                    </div>               
+                    <div class="room-buttons">
+                        <button class="add-cart" data-room-id="@room.RoomId" 
+                                data-room-type="@room.RoomTypeName"
+                                data-room-description="@room.RoomDescription"
+                                data-image-url="@room.ImageUrl"
+                                data-base-price="@room.BasePrice"
+                                data-guests="@room.Guests"
+                                data-area="@room.Area"
+                                data-floor="@room.Floor">
+                            <i class="fas fa-cart-plus"></i> Add to Cart
+                        </button>
+                        <a asp-controller="Room" asp-action="Details" asp-route-id="@room.RoomId" class="view-details">
+                            View Details
+                        </a>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
     }
->>>>>>> 326d8e20421d4f00ead55a5a95ec83a2eadec5d8
+    else
+    {
+        <p class="loading-message">No rooms available at the moment.</p>
+    }
 </div>
 
 @section Scripts {
-    <script src="~/js/rooms-server-filter.js"></script>
+    <script src="~/js/rooms-client-filter.js"></script>
 }

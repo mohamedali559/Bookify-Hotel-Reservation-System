@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", () => {
             saveCartToStorage(cart);
             renderCartItems();
             updateCartCount();
-            updateRoomButtonStates();
+            applyClientSideFilters();
             showToast(`${removedRoom.roomTypeName} removed from cart`, 'success');
         }
     }
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
             saveCartToStorage(cart);
             renderCartItems();
             updateCartCount();
-            updateRoomButtonStates();
+            applyClientSideFilters();
             showToast('Cart cleared', 'success');
         }
     }
@@ -217,59 +217,150 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     /* ===========================
-       UPDATE ROOM BUTTON STATES
+       CLIENT-SIDE FILTERING
     ============================ */
-    function updateRoomButtonStates() {
-        const addButtons = document.querySelectorAll('.add-cart');
-        addButtons.forEach(button => {
-            const roomId = parseInt(button.getAttribute('data-room-id'));
-            const inCart = cart.some(item => item.roomId === roomId);
-            
-            if (inCart) {
-                button.disabled = true;
-                button.style.opacity = '0.6';
-                button.style.cursor = 'not-allowed';
-                button.innerHTML = '<i class="fas fa-check"></i> In Cart';
-            } else {
-                button.disabled = false;
-                button.style.opacity = '1';
-                button.style.cursor = 'pointer';
-                button.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
-            }
+    
+    let allRoomCards = [];
+    
+    function initializeRoomCards() {
+        const container = document.getElementById('rooms-container');
+        if (!container) return;
+        
+        allRoomCards = Array.from(container.querySelectorAll('.room-card')).map(card => {
+            const addButton = card.querySelector('.add-cart');
+            return {
+                element: card.cloneNode(true),
+                roomId: parseInt(addButton.getAttribute('data-room-id')),
+                roomTypeName: addButton.getAttribute('data-room-type'),
+                roomDescription: addButton.getAttribute('data-room-description'),
+                imageUrl: addButton.getAttribute('data-image-url'),
+                basePrice: parseFloat(addButton.getAttribute('data-base-price')),
+                guests: parseInt(addButton.getAttribute('data-guests')),
+                area: parseFloat(addButton.getAttribute('data-area')),
+                floor: parseInt(addButton.getAttribute('data-floor'))
+            };
         });
     }
 
-    /* ===========================
-       ATTACH EVENT LISTENERS TO SERVER-RENDERED ROOMS
-    ============================ */
-    function attachCartEventListeners() {
-        const addButtons = document.querySelectorAll('.add-cart');
-        
-        addButtons.forEach(button => {
-            const roomData = {
-                roomId: parseInt(button.getAttribute('data-room-id')),
-                roomTypeName: button.getAttribute('data-room-type'),
-                roomDescription: button.getAttribute('data-room-description'),
-                imageUrl: button.getAttribute('data-image-url'),
-                basePrice: parseFloat(button.getAttribute('data-base-price')),
-                guests: parseInt(button.getAttribute('data-guests')),
-                area: parseFloat(button.getAttribute('data-area')),
-                floor: parseInt(button.getAttribute('data-floor'))
-            };
+    function applyClientSideFilters() {
+        const searchText = document.getElementById('search-room')?.value.toLowerCase().trim() || '';
+        const roomType = document.getElementById('room-type')?.value || '';
+        const guestsValue = document.getElementById('guests')?.value || '';
+        const priceRange = document.getElementById('price-select')?.value || '';
 
-            button.addEventListener('click', () => {
+        let filteredRooms = [...allRoomCards];
+
+        if (searchText) {
+            filteredRooms = filteredRooms.filter(room => 
+                room.roomTypeName.toLowerCase().includes(searchText) ||
+                room.roomDescription.toLowerCase().includes(searchText)
+            );
+        }
+
+        if (roomType) {
+            filteredRooms = filteredRooms.filter(room => 
+                room.roomTypeName.toLowerCase() === roomType.toLowerCase()
+            );
+        }
+
+        if (guestsValue) {
+            const minGuests = parseInt(guestsValue);
+            filteredRooms = filteredRooms.filter(room => room.guests >= minGuests);
+        }
+
+        if (priceRange && priceRange.includes('-')) {
+            const [minPrice, maxPrice] = priceRange.split('-').map(p => parseFloat(p));
+            filteredRooms = filteredRooms.filter(room => 
+                room.basePrice >= minPrice && room.basePrice <= maxPrice
+            );
+        }
+
+        renderFilteredRooms(filteredRooms);
+    }
+
+    function renderFilteredRooms(filteredRooms) {
+        const container = document.getElementById('rooms-container');
+        if (!container) return;
+
+        container.innerHTML = '';
+
+        if (filteredRooms.length === 0) {
+            container.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                    <i class="fas fa-search" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
+                    <p class="loading-message">No rooms found matching your criteria.</p>
+                    <p style="color: #666; margin-top: 10px;">Try adjusting your filters to see more results.</p>
+                </div>
+            `;
+            return;
+        }
+
+        filteredRooms.forEach(room => {
+            const roomCard = room.element.cloneNode(true);
+            const addButton = roomCard.querySelector('.add-cart');
+            const roomId = parseInt(addButton.getAttribute('data-room-id'));
+            const inCart = cart.some(item => item.roomId === roomId);
+
+            if (inCart) {
+                addButton.disabled = true;
+                addButton.style.opacity = '0.6';
+                addButton.style.cursor = 'not-allowed';
+                addButton.innerHTML = '<i class="fas fa-check"></i> In Cart';
+            } else {
+                addButton.disabled = false;
+                addButton.style.opacity = '1';
+                addButton.style.cursor = 'pointer';
+                addButton.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+            }
+
+            addButton.addEventListener('click', () => {
+                const roomData = {
+                    roomId: parseInt(addButton.getAttribute('data-room-id')),
+                    roomTypeName: addButton.getAttribute('data-room-type'),
+                    roomDescription: addButton.getAttribute('data-room-description'),
+                    imageUrl: addButton.getAttribute('data-image-url'),
+                    basePrice: parseFloat(addButton.getAttribute('data-base-price')),
+                    guests: parseInt(addButton.getAttribute('data-guests')),
+                    area: parseFloat(addButton.getAttribute('data-area')),
+                    floor: parseInt(addButton.getAttribute('data-floor'))
+                };
+
                 if (addToCart(roomData)) {
-                    button.disabled = true;
-                    button.style.opacity = '0.6';
-                    button.style.cursor = 'not-allowed';
-                    button.innerHTML = '<i class="fas fa-check"></i> In Cart';
+                    addButton.disabled = true;
+                    addButton.style.opacity = '0.6';
+                    addButton.style.cursor = 'not-allowed';
+                    addButton.innerHTML = '<i class="fas fa-check"></i> In Cart';
                 }
             });
+
+            container.appendChild(roomCard);
         });
     }
 
-    // Initialize cart UI and attach event listeners
+    function resetFilters() {
+        document.getElementById('search-room').value = '';
+        document.getElementById('room-type').value = '';
+        document.getElementById('guests').value = '';
+        document.getElementById('price-select').value = '';
+        
+        applyClientSideFilters();
+        showToast('Filters reset', 'success');
+    }
+
+    // Initialize
+    initializeRoomCards();
     updateCartCount();
-    updateRoomButtonStates();
-    attachCartEventListeners();
+
+    // Attach filter event listeners
+    const searchInput = document.getElementById('search-room');
+    const roomTypeSelect = document.getElementById('room-type');
+    const guestsSelect = document.getElementById('guests');
+    const priceSelect = document.getElementById('price-select');
+    const resetButton = document.getElementById('reset-filters');
+
+    if (searchInput) searchInput.addEventListener('input', applyClientSideFilters);
+    if (roomTypeSelect) roomTypeSelect.addEventListener('change', applyClientSideFilters);
+    if (guestsSelect) guestsSelect.addEventListener('change', applyClientSideFilters);
+    if (priceSelect) priceSelect.addEventListener('change', applyClientSideFilters);
+    if (resetButton) resetButton.addEventListener('click', resetFilters);
 });

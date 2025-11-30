@@ -45,7 +45,6 @@
                             .Include(r => r.RoomAmenities)
                             .ThenInclude(ra => ra.Amenity);
         }
-<<<<<<< HEAD
 
         public Room? GetByIdWithAmenitiesAndRoomType(int id)
         {
@@ -56,14 +55,12 @@
                 .FirstOrDefault(r => r.Id == id);
         }
 
-=======
         public Room GetAllWithAmenitiesAndRoomTypeById(int id)
         {
             return _Context.Rooms.Include(r => r.RoomType)
                             .Include(r => r.RoomAmenities)
                             .ThenInclude(ra => ra.Amenity).FirstOrDefault(r => r.Id == id);
         }
->>>>>>> 326d8e20421d4f00ead55a5a95ec83a2eadec5d8
         public void Save()
         {
             _Context.SaveChanges();
