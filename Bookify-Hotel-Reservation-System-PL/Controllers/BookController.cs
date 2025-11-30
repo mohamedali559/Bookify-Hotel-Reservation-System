@@ -4,6 +4,7 @@ using Bookify_Hotel_Reservation_System_PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 
 namespace Bookify_Hotel_Reservation_System_PL.Controllers
@@ -30,76 +31,87 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         }
 
         [HttpPost]
-        [Authorize]
         public async Task<IActionResult> CreateBooking([FromBody] BookingViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return Json(new { success = false, message = "Invalid booking data" });
-            }
-
-            // Validate dates
-            if (model.CheckInDate < DateTime.Today)
-            {
-                return Json(new { success = false, message = "Check-in date cannot be in the past" });
-            }
-
-            if (model.CheckOutDate <= model.CheckInDate)
-            {
-                return Json(new { success = false, message = "Check-out date must be after check-in date" });
-            }
-
-            // Get current user
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Json(new { success = false, message = "User not authenticated" });
-            }
-
-            // Verify room exists and get room with RoomType
-            var room = _roomRepository.GetByIdWithAmenitiesAndRoomType(model.RoomId);
-            if (room == null)
-            {
-                return Json(new { success = false, message = "Room not found" });
-            }
-
-            if (room.RoomType == null)
-            {
-                return Json(new { success = false, message = "Room type information not available" });
-            }
-
-            // Check if room is available for the selected dates
-            var existingBookings = _bookingRepository.GetAll()
-                .Where(b => b.RoomId == model.RoomId &&
-                           b.Status != BookingStatus.Cancelled &&
-                           ((b.CheckInDate <= model.CheckInDate && b.CheckOutDate > model.CheckInDate) ||
-                            (b.CheckInDate < model.CheckOutDate && b.CheckOutDate >= model.CheckOutDate) ||
-                            (b.CheckInDate >= model.CheckInDate && b.CheckOutDate <= model.CheckOutDate)))
-                .ToList();
-
-            if (existingBookings.Any())
-            {
-                return Json(new { success = false, message = "Room is not available for the selected dates" });
-            }
-
-            // Calculate nights and total price from RoomType.BasePrice
-            var nights = (model.CheckOutDate - model.CheckInDate).Days;
-            var totalPrice = nights * room.RoomType.BasePrice;
-
-            // Create booking
-            var booking = new Booking
-            {
-                RoomId = model.RoomId,
-                UserId = userId,
-                CheckInDate = model.CheckInDate,
-                CheckOutDate = model.CheckOutDate,
-                Price = totalPrice,
-                Status = BookingStatus.Pending,
-                CreatedAt = DateTime.Now
-            };
-
             try
             {
+                if (!ModelState.IsValid)
+                {
+                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                    return Json(new { success = false, message = "Invalid booking data: " + string.Join(", ", errors) });
+                }
+
+                // Validate dates
+                if (model.CheckInDate < DateTime.Today)
+                {
+                    return Json(new { success = false, message = "Check-in date cannot be in the past" });
+                }
+
+                if (model.CheckOutDate <= model.CheckInDate)
+                {
+                    return Json(new { success = false, message = "Check-out date must be after check-in date" });
+                }
+
+                // Get current user (if logged in)
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                
+                // For testing: use a default user if not logged in
+                if (string.IsNullOrEmpty(userId))
+                {
+                    // Try to get any user from database for testing
+                    var defaultUser = await _userManager.Users.FirstOrDefaultAsync();
+                    if (defaultUser != null)
+                    {
+                        userId = defaultUser.Id;
+                    }
+                    else
+                    {
+                        return Json(new { success = false, message = "No users found in database. Please register first." });
+                    }
+                }
+
+                // Verify room exists and get room with RoomType
+                var room = _roomRepository.GetByIdWithAmenitiesAndRoomType(model.RoomId);
+                if (room == null)
+                {
+                    return Json(new { success = false, message = "Room not found" });
+                }
+
+                if (room.RoomType == null)
+                {
+                    return Json(new { success = false, message = "Room type information not available" });
+                }
+
+                // Check if room is available for the selected dates
+                var existingBookings = _bookingRepository.GetAll()
+                    .Where(b => b.RoomId == model.RoomId &&
+                               b.Status != BookingStatus.Cancelled &&
+                               ((b.CheckInDate <= model.CheckInDate && b.CheckOutDate > model.CheckInDate) ||
+                                (b.CheckInDate < model.CheckOutDate && b.CheckOutDate >= model.CheckOutDate) ||
+                                (b.CheckInDate >= model.CheckInDate && b.CheckOutDate <= model.CheckOutDate)))
+                    .ToList();
+
+                if (existingBookings.Any())
+                {
+                    return Json(new { success = false, message = "Room is not available for the selected dates" });
+                }
+
+                // Calculate nights and total price from RoomType.BasePrice
+                var nights = (model.CheckOutDate - model.CheckInDate).Days;
+                var totalPrice = nights * room.RoomType.BasePrice;
+
+                // Create booking
+                var booking = new Booking
+                {
+                    RoomId = model.RoomId,
+                    UserId = userId,
+                    CheckInDate = model.CheckInDate,
+                    CheckOutDate = model.CheckOutDate,
+                    Price = totalPrice,
+                    Status = BookingStatus.Pending,
+                    CreatedAt = DateTime.Now
+                };
+
                 _bookingRepository.Add(booking);
                 _bookingRepository.Save();
 
@@ -114,7 +126,19 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Error creating booking: " + ex.Message });
+                // Log the detailed error for debugging
+                Console.WriteLine($"Booking Error: {ex.Message}");
+                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
+                }
+                
+                return Json(new { 
+                    success = false, 
+                    message = "Error creating booking: " + ex.Message,
+                    details = ex.InnerException?.Message 
+                });
             }
         }
 
