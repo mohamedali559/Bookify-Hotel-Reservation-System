@@ -1,61 +1,68 @@
 ﻿@model IEnumerable<Amenity>
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Amenities";
 }
+
 @section Styles {
     <link rel="stylesheet" href="~/css/amenities.css" />
 }
+
 <!-- Amenities Section -->
-<div class="container" style="margin-left:230px;">
-    <h1 style="font-size: 40px; font-weight:bold ; color: rgb(20, 20, 83);">Hotel Amenities</h1>
+<div class="amenities-container">
+    <h1 style="font-size: 40px; font-weight:bold; color: rgb(20, 20, 83);">Hotel Amenities</h1>
     <p class="description" style="color: rgb(66, 66, 77);">Experience world-class facilities and services designed to make your stay comfortable, convenient, and truly memorable.</p>
 
     <div class="amenities-grid">
-        <!-- Example amenity card -->
         <div class="amenity-card">
             <i class="fas fa-wifi amenity-icon"></i>
             <div class="amenity-title">Free Wi-Fi</div>
             <div class="amenity-text">High-speed internet throughout the hotel</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-water amenity-icon"></i>
             <div class="amenity-title">Pool & Spa</div>
             <div class="amenity-text">Heated outdoor pool and luxury spa</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-utensils amenity-icon"></i>
             <div class="amenity-title">Restaurant</div>
             <div class="amenity-text">Fine dining and room service</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-dumbbell amenity-icon"></i>
             <div class="amenity-title">Fitness Center</div>
             <div class="amenity-text">Modern gym equipment available 24/7</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-car amenity-icon"></i>
             <div class="amenity-title">Parking</div>
             <div class="amenity-text">Secure on-site parking for guests</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-bed amenity-icon"></i>
             <div class="amenity-title">Comfortable Beds</div>
             <div class="amenity-text">Sleep peacefully on premium mattresses</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-coffee amenity-icon"></i>
             <div class="amenity-title">Coffee Lounge</div>
             <div class="amenity-text">Enjoy freshly brewed coffee anytime</div>
         </div>
+        
         <div class="amenity-card">
             <i class="fas fa-shuttle-van amenity-icon"></i>
             <div class="amenity-title">Airport Shuttle</div>
             <div class="amenity-text">Convenient shuttle service for guests</div>
         </div>
-      
-
     </div>
 </div>
+
 @section Scripts {
-    <script src="js/amenities.js"></script>
+    <script src="~/js/amenities.js"></script>
 }

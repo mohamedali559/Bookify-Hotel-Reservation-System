@@ -12,6 +12,10 @@
 </head>
 
 <body>
+    @{
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    }
+    
     <nav class="navbar">
         <div class="container navbar-container d-flex justify-content-between align-items-center w-100">
 
@@ -23,12 +27,12 @@
 
             <!-- Nav Links -->
             <div class="nav-links d-flex align-items-center gap-3" id="nav-links">
-                <a asp-controller="Home" asp-action="Index">Home</a>
-                <a asp-controller="Room" asp-action="Index">Rooms</a>
-                <a asp-controller="Amenity" asp-action="Index">Amenities</a>
-                <a asp-controller="Gallery" asp-action="Index">Gallery</a>
-                <a asp-controller="About" asp-action="Index" class="active">About</a>
-                <a asp-controller="Contact" asp-action="Index">Contact</a>
+                <a asp-controller="Home" asp-action="Index" class="@(currentController == "Home" ? "active" : "")">Home</a>
+                <a asp-controller="Room" asp-action="Index" class="@(currentController == "Room" ? "active" : "")">Rooms</a>
+                <a asp-controller="Amenity" asp-action="Index" class="@(currentController == "Amenity" ? "active" : "")">Amenities</a>
+                <a asp-controller="Gallery" asp-action="Index" class="@(currentController == "Gallery" ? "active" : "")">Gallery</a>
+                <a asp-controller="About" asp-action="Index" class="@(currentController == "About" ? "active" : "")">About</a>
+                <a asp-controller="Contact" asp-action="Index" class="@(currentController == "Contact" ? "active" : "")">Contact</a>
 
             </div>
 
@@ -50,15 +54,9 @@
     @RenderSection("Hero", required: false)
 
     <!-- PAGE CONTENT -->
-    <div class="container pt-10 max-w-full mx-auto px-5 mt-12">
-        <main role="main" class="pb-1">
-            @RenderBody()
-        </main>
-    </div>
-
-
-
-
+    <main role="main" class="pb-1">
+        @RenderBody()
+    </main>
 
     <footer class="footer">
         <div class="footer-container">
@@ -76,7 +74,7 @@
                 <h3>Quick Links</h3>
                 <ul>
                     <li><a asp-controller="Home" asp-action="Index">Home</a></li>
-                    <li><a asp-controller="Rooms" asp-action="Index">Rooms</a></li>
+                    <li><a asp-controller="Room" asp-action="Index">Rooms</a></li>
                     <li><a asp-controller="Gallery" asp-action="Index">Gallery</a></li>
                     <li><a asp-controller="Contact" asp-action="Index">Contact</a></li>
                 </ul>

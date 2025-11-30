@@ -1,185 +1,271 @@
-﻿/* Body - No background image here, individual pages can add their own */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f5f5f5;
+﻿/* ===========================
+   Global Layout Styles
+   =========================== */
+
+/* Body - Global Reset */
+* {
+    box-sizing: border-box;
 }
 
-/* Navbar */
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0 !important;
+    padding: 0 !important;
+    padding-top: 70px !important;
+    font-family: 'Arial', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+}
+
+/* ===========================
+   Navbar - Fixed Universal Styles
+   =========================== */
+
 .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 9999;
-    background-color: #ffffff;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 70px !important;
+    z-index: 9999 !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1) !important;
 }
 
 .navbar-container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 12px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    max-width: 1200px !important;
+    height: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
 }
 
-/* Logo */
+/* ===========================
+   Logo Section - Fixed Styles
+   =========================== */
+
 .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
 }
 
 .logo-box {
-    background-color: #08306C;
-    color: white;
-    font-weight: bold;
-    padding: 5px 12px;
-    border-radius: 8px;
+    background-color: #08306C !important;
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 14px !important;
+    padding: 6px 12px !important;
+    border-radius: 8px !important;
+    line-height: 1 !important;
 }
 
 .logo-text {
-    font-size: 18px;
-    font-weight: 600;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #000 !important;
+    line-height: 1 !important;
 }
 
-/* Nav Links */
+/* ===========================
+   Nav Links - Fixed Styles
+   =========================== */
+
 .nav-links {
-    display: flex;
-    gap: 20px;
-    align-items: center;
+    display: flex !important;
+    gap: 20px !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
-    .nav-links a {
-        text-decoration: none;
-        color: black;
-        transition: color 0.3s;
-        padding: 5px 0;
-    }
+.nav-links a {
+    text-decoration: none !important;
+    color: #000 !important;
+    font-size: 16px !important;
+    font-weight: 400 !important;
+    padding: 5px 0 !important;
+    border-bottom: 2px solid transparent !important;
+    transition: all 0.3s ease !important;
+    position: relative;
+    display: inline-block;
+}
 
-        .nav-links a:hover {
-            color: #3b82f6;
-        }
+.nav-links a:hover {
+    color: #3b82f6 !important;
+}
 
-        .nav-links a.active {
-            color: #3b82f6;
-            font-weight: 600;
-        }
+.nav-links a.active {
+    color: #3b82f6 !important;
+    font-weight: 600 !important;
+    border-bottom: 2px solid #3b82f6 !important;
+}
 
-/* User Section */
+/* ===========================
+   User Section - Fixed Styles
+   =========================== */
+
+.user-section {
+    display: flex !important;
+    gap: 10px !important;
+    align-items: center !important;
+}
+
 .user-section a,
 .user-section button {
-    background-color: #08306C;
-    color: white;
-    padding: 8px 20px;
-    border-radius: 8px;
-    font-weight: 500;
-    text-decoration: none;
-    transition: background-color 0.3s;
-    border: none;
-    cursor: pointer;
+    background-color: #08306C !important;
+    color: white !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    padding: 8px 20px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: background-color 0.3s ease !important;
+    line-height: 1 !important;
 }
 
-    .user-section a:hover,
-    .user-section button:hover {
-        background-color: #064273;
-    }
+.user-section a:hover,
+.user-section button:hover {
+    background-color: #064273 !important;
+}
 
-/* Hamburger */
+/* ===========================
+   Hamburger Menu (Mobile)
+   =========================== */
+
 .hamburger {
     display: none;
     font-size: 24px;
     cursor: pointer;
+    color: #000;
 }
 
-/* Mobile Menu */
+/* ===========================
+   Mobile Responsive
+   =========================== */
+
 @media screen and (max-width: 768px) {
+    body {
+        padding-top: 60px !important;
+    }
+    
+    .navbar {
+        height: 60px !important;
+    }
+    
+    .logo-text {
+        font-size: 16px !important;
+    }
+    
+    .logo-box {
+        font-size: 12px !important;
+        padding: 5px 10px !important;
+    }
+    
     .nav-links {
         display: none;
-        flex-direction: column;
+        flex-direction: column !important;
         position: absolute;
-        top: 70px;
+        top: 60px;
         left: 0;
         width: 100%;
         background-color: #ffffff;
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-        padding: 10px 0;
+        padding: 10px 0 !important;
+        gap: 0 !important;
     }
 
-        .nav-links.active {
-            display: flex;
-        }
+    .nav-links.active {
+        display: flex !important;
+    }
 
-        .nav-links a {
-            padding: 10px 20px;
-            width: 100%;
-        }
+    .nav-links a {
+        padding: 12px 20px !important;
+        width: 100% !important;
+        border-bottom: 1px solid #f0f0f0 !important;
+    }
+    
+    .nav-links a:last-child {
+        border-bottom: none !important;
+    }
 
     .hamburger {
-        display: block;
+        display: block !important;
     }
 
     .user-section {
-        display: none;
-    }
-
-    .user-section-mobile {
-        display: block;
-        padding: 10px 20px;
+        display: none !important;
     }
 }
 
-/* Hero Section - Default for pages that need it */
+/* ===========================
+   Hero Section (Optional for pages)
+   =========================== */
+
 .hero-section {
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align: center;
     background-color: rgba(0, 0, 0, 0.3);
+    margin-top: -70px;
+    padding-top: 70px;
 }
 
 .hero-content {
     color: white;
     max-width: 800px;
-    padding: 20px;
+    padding: 40px 20px;
     border-radius: 12px;
 }
 
-    .hero-content h1 {
-        font-size: 55px;
-        font-weight: bold;
-        margin-bottom: 20px;
-    }
+.hero-content h1 {
+    font-size: 55px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
 
-    .hero-content p {
-        font-size: 20px;
-        margin-bottom: 30px;
-    }
+.hero-content p {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
 
 .hero-login-btn {
     background-color: #08306C;
     color: white;
-    padding: 10px 25px;
+    padding: 12px 30px;
     border-radius: 8px;
     font-weight: 500;
     text-decoration: none;
     transition: background-color 0.3s;
+    display: inline-block;
 }
 
-    .hero-login-btn:hover {
-        background-color: #064273;
-    }
+.hero-login-btn:hover {
+    background-color: #064273;
+}
 
-/* Footer */
+/* ===========================
+   Footer Styles
+   =========================== */
+
 .footer {
     background-color: white;
     color: black;
     padding: 40px 20px 24px;
     border-top: 1px solid #d1d5db;
     text-align: center;
+    margin-top: 60px;
 }
 
 .footer-container {
@@ -189,7 +275,6 @@ body {
     flex-wrap: wrap;
     justify-content: space-between;
     gap: 40px;
-    text-align: center;
 }
 
 .footer-about,
@@ -197,6 +282,7 @@ body {
 .footer-social {
     flex: 1;
     min-width: 250px;
+    text-align: center;
 }
 
 .footer-logo {
@@ -205,6 +291,22 @@ body {
     align-items: center;
     gap: 8px;
     margin-bottom: 12px;
+}
+
+.footer-logo h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+.footer-about p {
+    color: #666;
+    line-height: 1.8;
+}
+
+.footer-links h3,
+.footer-social h3 {
+    margin-bottom: 15px;
+    color: #000;
 }
 
 .footer-links ul {
@@ -223,9 +325,9 @@ body {
     transition: color 0.3s;
 }
 
-    .footer-links a:hover {
-        color: #60a5fa;
-    }
+.footer-links a:hover {
+    color: #60a5fa;
+}
 
 .footer-social .social-icons {
     display: flex;
@@ -239,13 +341,39 @@ body {
     transition: color 0.3s;
 }
 
-    .footer-social a:hover {
-        color: #60a5fa;
-    }
+.footer-social a:hover {
+    color: #60a5fa;
+}
 
 .footer-bottom {
     margin-top: 40px;
     padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
     color: #4b5563;
     font-size: 12px;
+}
+
+/* ===========================
+   Mobile Footer
+   =========================== */
+
+@media screen and (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        gap: 30px;
+    }
+    
+    .footer-about,
+    .footer-links,
+    .footer-social {
+        min-width: 100%;
+    }
+    
+    .hero-content h1 {
+        font-size: 35px;
+    }
+    
+    .hero-content p {
+        font-size: 16px;
+    }
 }
