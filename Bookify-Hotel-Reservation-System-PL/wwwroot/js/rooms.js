@@ -173,6 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+<<<<<<< HEAD
     /* ===========================
        FILTERS
     ============================ */
@@ -241,3 +242,42 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("price-select").addEventListener("change", applyFilters);
     });
 
+=======
+//    /* ===========================
+//       FILTERS
+//    ============================ */
+//    function applyFilters() {
+//        const search = document.getElementById("search-room").value.toLowerCase();
+//        const type = document.getElementById("room-type").value;
+//        const guests = document.getElementById("guests").value;
+//        const maxPrice = document.getElementById("price-select").value;
+
+//        let min = 0, max = Infinity;
+//        if (maxPrice) {
+//            [min, max] = maxPrice.split('-').map(Number);
+//        }
+
+//        const filtered = rooms.filter(room => {
+//            if (!room.name.toLowerCase().includes(search)) return false;
+//            if (type && room.type !== type) return false;
+//            if (guests && room.guests != guests) return false;
+//            if (room.price < min || room.price > max) return false;
+//            return true;
+//        });
+
+//        renderRooms(filtered);
+//    }
+
+//    function renderRooms(filteredRooms) {
+//        const container = document.getElementById("rooms-container");
+//        container.innerHTML = "";
+//        filteredRooms.forEach(r => container.appendChild(r.element));
+//    }
+
+//    document.getElementById("search-room").addEventListener("input", applyFilters);
+//    document.getElementById("room-type").addEventListener("change", applyFilters);
+//    document.getElementById("guests").addEventListener("change", applyFilters);
+//    document.getElementById("price-select").addEventListener("change", applyFilters);
+
+//});
+>>>>>>> 326d8e20421d4f00ead55a5a95ec83a2eadec5d8

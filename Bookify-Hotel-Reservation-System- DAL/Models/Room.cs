@@ -30,7 +30,6 @@ namespace Bookify_Hotel_Reservation_System__DAL.Models
         public ICollection<Booking> Bookings { get; set; }
         public ICollection<RoomAmenity> RoomAmenities { get; set; }
 
-
     }
 
 }
