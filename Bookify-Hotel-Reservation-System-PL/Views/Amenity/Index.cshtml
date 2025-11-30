@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="~/css/amenities.css" />
 }
 <!-- Amenities Section -->
-<div class="container">
+<div class="container" style="margin-left:230px;">
     <h1 style="font-size: 40px; font-weight:bold ; color: rgb(20, 20, 83);">Hotel Amenities</h1>
     <p class="description" style="color: rgb(66, 66, 77);">Experience world-class facilities and services designed to make your stay comfortable, convenient, and truly memorable.</p>
 
@@ -59,34 +59,3 @@
 @section Scripts {
     <script src="js/amenities.js"></script>
 }
-
-@* <a asp-action="Add" class="btn btn-primary">Add</a>
-@if (Model.Any())
-{
-    <table class="table table-bordered table-hover table-responsive">
-        <thead>
-            <tr>
-                <th>Amenity ID</th>
-                <th>Amenity Name</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var amenity in Model)
-            {
-                <tr>
-                    <td>@amenity.Id</td>
-                    <td>@amenity.Name</td>
-                    <td>@amenity.Description</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <div class="alert alert-danger">
-        No Reviews found
-    </div>
-} *@
-

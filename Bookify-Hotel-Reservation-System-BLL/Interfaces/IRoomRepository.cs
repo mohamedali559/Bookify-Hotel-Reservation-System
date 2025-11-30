@@ -19,6 +19,8 @@ namespace Bookify_Hotel_Reservation_System_BLL.Interfaces
 
         IEnumerable<Room> GetAllWithAmenitiesAndRoomType();
 
+        Room? GetByIdWithAmenitiesAndRoomType(int id);
+
         public void Save();
     }
 }

@@ -121,26 +121,26 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         }
 
         // تفاصيل الغرفة (يمكن تستخدمها للصفحة الفردية)
-        //public IActionResult RoomDetails(int id)
-        //{
-        //    var item = _roomRepository.GetByIdWithAmenitiesAndRoomType(id);
-        //
-        //    if (item == null) return NotFound();
-        //
-        //    var model = new RoomDetailsViewModel
-        //    {
-        //        RoomId = item.Id,
-        //        Floor = item.Floor,
-        //        ImageUrl = item.ImageUrl,
-        //        RoomTypeName = item.RoomType.Name,
-        //        RoomDescription = item.RoomType.Description,
-        //        Area = item.RoomType.Area,
-        //        Guests = item.RoomType.Guests,
-        //        BasePrice = item.RoomType.BasePrice,
-        //        Amenities = item.RoomAmenities.Select(ra => ra.Amenity).ToList()
-        //    };
-        //
-        //    return View(model);
-        //}
+        public IActionResult RoomDetails(int id)
+        {
+            var item = _roomRepository.GetByIdWithAmenitiesAndRoomType(id);
+
+            if (item == null) return NotFound();
+
+            var model = new RoomDetailsViewModel
+            {
+                RoomId = item.Id,
+                Floor = item.Floor,
+                ImageUrl = item.ImageUrl,
+                RoomTypeName = item.RoomType.Name,
+                RoomDescription = item.RoomType.Description,
+                Area = item.RoomType.Area,
+                Guests = item.RoomType.Guests,
+                BasePrice = item.RoomType.BasePrice,
+                Amenities = item.RoomAmenities.Select(ra => ra.Amenity).ToList()
+            };
+
+            return View(model);
+        }
     }
 }

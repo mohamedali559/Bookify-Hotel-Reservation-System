@@ -1,6 +1,4 @@
-﻿
-
-namespace Bookify_Hotel_Reservation_System_BLL.Repositories
+﻿namespace Bookify_Hotel_Reservation_System_BLL.Repositories
 {
     public class RoomRepository : IRoomRepository
     {
@@ -40,12 +38,23 @@ namespace Bookify_Hotel_Reservation_System_BLL.Repositories
             _Context.Rooms.Update(room);
             return room;
         }
+        
         public IEnumerable<Room> GetAllWithAmenitiesAndRoomType()
         {
             return _Context.Rooms.Include(r => r.RoomType)
                             .Include(r => r.RoomAmenities)
                             .ThenInclude(ra => ra.Amenity);
         }
+
+        public Room? GetByIdWithAmenitiesAndRoomType(int id)
+        {
+            return _Context.Rooms
+                .Include(r => r.RoomType)
+                .Include(r => r.RoomAmenities)
+                .ThenInclude(ra => ra.Amenity)
+                .FirstOrDefault(r => r.Id == id);
+        }
+
         public void Save()
         {
             _Context.SaveChanges();

@@ -1,13 +1,9 @@
-﻿/* Body */
+﻿/* Body - No background image here, individual pages can add their own */
 body {
-    background-image: url('../images/h1.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
 }
-
 
 /* Navbar */
 .navbar {
@@ -65,6 +61,11 @@ body {
 
         .nav-links a:hover {
             color: #3b82f6;
+        }
+
+        .nav-links a.active {
+            color: #3b82f6;
+            font-weight: 600;
         }
 
 /* User Section */
@@ -130,7 +131,7 @@ body {
     }
 }
 
-/* Hero Section */
+/* Hero Section - Default for pages that need it */
 .hero-section {
     height: 100vh;
     display: flex;
