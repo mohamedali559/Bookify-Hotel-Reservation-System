@@ -75,12 +75,19 @@ document.addEventListener("DOMContentLoaded", () => {
         
         toast.textContent = message;
         toast.style.display = "block";
-        toast.style.background = type === 'success' ? 'rgba(76, 175, 80, 0.95)' : 'rgba(255, 152, 0, 0.95)';
+        toast.style.background = type === 'success' 
+            ? 'rgba(76, 175, 80, 0.95)' 
+            : type === 'warning' 
+                ? 'rgba(255, 152, 0, 0.95)' 
+                : 'rgba(244, 67, 54, 0.95)';
         toast.style.color = '#fff';
+        toast.style.padding = '12px 20px';
+        toast.style.borderRadius = '8px';
+        toast.style.fontWeight = '600';
         
         setTimeout(() => {
             toast.style.display = "none";
-        }, 2000);
+        }, 3000);
     }
 
     function addToCart(roomData) {
@@ -122,13 +129,28 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function clearCart() {
-        if (confirm('Are you sure you want to clear your cart?')) {
+        if (cart.length === 0) {
+            showToast('Cart is already empty', 'warning');
+            return;
+        }
+        
+        if (confirm('Are you sure you want to clear your cart?\n\nThis will remove all selected rooms.')) {
+            const roomCount = cart.length;
             cart = [];
             saveCartToStorage(cart);
             renderCartItems();
             updateCartCount();
             applyClientSideFilters();
-            showToast('Cart cleared', 'success');
+            
+            // Close popup after clearing
+            const popup = document.getElementById('cart-popup');
+            if (popup) {
+                setTimeout(() => {
+                    popup.style.display = 'none';
+                }, 500);
+            }
+            
+            showToast(`? Cart cleared! ${roomCount} room${roomCount > 1 ? 's' : ''} removed.`, 'success');
         }
     }
 
@@ -142,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
         container.innerHTML = "";
 
         if (cart.length === 0) {
-            container.innerHTML = "<p style='text-align:center;color:#666;'>Your cart is empty.</p>";
+            container.innerHTML = "<p style='text-align:center;color:#666;padding:20px;'>Your cart is empty.</p>";
             return;
         }
 
@@ -152,16 +174,16 @@ document.addEventListener("DOMContentLoaded", () => {
             const div = document.createElement('div');
             div.className = "cart-item";
             div.innerHTML = `
-                <div style="display:flex;gap:10px;align-items:center;padding:10px 0;position:relative;">
+                <div style="display:flex;gap:10px;align-items:center;padding:10px 0;position:relative;border-bottom:1px solid #eee;">
                     <img src="${room.imageUrl}" alt="${room.roomTypeName}" 
-                         style="width:60px;height:50px;object-fit:cover;border-radius:5px;">
+                         style="width:70px;height:60px;object-fit:cover;border-radius:8px;">
                     <div style="flex:1;">
-                        <strong style="display:block;color:#0b3a66;">${room.roomTypeName}</strong>
-                        <small style="color:#666;">Floor ${room.floor} • ${room.guests} Guests</small>
-                        <div style="color:#2563eb;font-weight:600;margin-top:3px;">$${room.basePrice}</div>
+                        <strong style="display:block;color:#0b3a66;font-size:0.95rem;">${room.roomTypeName}</strong>
+                        <small style="color:#666;display:block;margin:3px 0;">Floor ${room.floor} • ${room.guests} Guests • ${room.area}m²</small>
+                        <div style="color:#2563eb;font-weight:700;margin-top:3px;font-size:1.05rem;">$${room.basePrice}</div>
                     </div>
                     <button onclick="removeFromCart(${i})" class="cart-remove" 
-                            style="position:absolute;top:10px;right:0;">
+                            style="position:absolute;top:10px;right:0;background:#e74c3c;color:#fff;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;font-size:0.85rem;">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
@@ -170,14 +192,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         const footer = document.createElement('div');
-        footer.style.cssText = 'margin-top:15px;padding-top:15px;border-top:2px solid #eee;';
+        footer.style.cssText = 'margin-top:15px;padding-top:15px;border-top:2px solid #ddd;';
         footer.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-                <strong style="color:#0b3a66;">Total:</strong>
-                <strong style="color:#2563eb;font-size:1.2rem;">$${total.toFixed(2)}</strong>
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+                <strong style="color:#0b3a66;font-size:1.1rem;">Total:</strong>
+                <strong style="color:#2563eb;font-size:1.3rem;">$${total.toFixed(2)}</strong>
             </div>
             <button onclick="clearCart()" 
-                    style="width:100%;padding:8px;background:#e74c3c;color:#fff;border:none;border-radius:5px;cursor:pointer;margin-bottom:5px;">
+                    style="width:100%;padding:10px;background:#e74c3c;color:#fff;border:none;border-radius:6px;cursor:pointer;margin-bottom:8px;font-weight:600;transition:all 0.3s;">
                 Clear Cart
             </button>
         `;
@@ -202,7 +224,12 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         
-        window.location.href = '/Reservation';
+        // Close the popup
+        const popup = document.getElementById("cart-popup");
+        if (popup) popup.style.display = 'none';
+        
+        // Navigate to Reservation page
+        window.location.href = '/Reservation/Index';
     });
 
     document.addEventListener('click', (e) => {
@@ -286,10 +313,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (filteredRooms.length === 0) {
             container.innerHTML = `
-                <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-                    <i class="fas fa-search" style="font-size: 48px; color: #ccc; margin-bottom: 15px;"></i>
-                    <p class="loading-message">No rooms found matching your criteria.</p>
-                    <p style="color: #666; margin-top: 10px;">Try adjusting your filters to see more results.</p>
+                <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                    <i class="fas fa-search" style="font-size: 64px; color: #ddd; margin-bottom: 20px; display: block;"></i>
+                    <p class="loading-message" style="font-size: 1.2rem; color: #666; margin-bottom: 10px;">No rooms found matching your criteria.</p>
+                    <p style="color: #999; font-size: 0.95rem;">Try adjusting your filters to see more results.</p>
                 </div>
             `;
             return;
@@ -306,14 +333,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 addButton.style.opacity = '0.6';
                 addButton.style.cursor = 'not-allowed';
                 addButton.innerHTML = '<i class="fas fa-check"></i> In Cart';
+                addButton.style.background = 'linear-gradient(90deg, #10b981, #059669)';
             } else {
                 addButton.disabled = false;
                 addButton.style.opacity = '1';
                 addButton.style.cursor = 'pointer';
                 addButton.innerHTML = '<i class="fas fa-cart-plus"></i> Add to Cart';
+                addButton.style.background = 'linear-gradient(90deg,#06b6d4,#3b82f6)';
             }
 
             addButton.addEventListener('click', () => {
+                if (addButton.disabled) return;
+                
                 const roomData = {
                     roomId: parseInt(addButton.getAttribute('data-room-id')),
                     roomTypeName: addButton.getAttribute('data-room-type'),
@@ -330,6 +361,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     addButton.style.opacity = '0.6';
                     addButton.style.cursor = 'not-allowed';
                     addButton.innerHTML = '<i class="fas fa-check"></i> In Cart';
+                    addButton.style.background = 'linear-gradient(90deg, #10b981, #059669)';
                 }
             });
 
@@ -337,30 +369,21 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    function resetFilters() {
-        document.getElementById('search-room').value = '';
-        document.getElementById('room-type').value = '';
-        document.getElementById('guests').value = '';
-        document.getElementById('price-select').value = '';
-        
-        applyClientSideFilters();
-        showToast('Filters reset', 'success');
-    }
-
     // Initialize
     initializeRoomCards();
     updateCartCount();
+    
+    // Initial render with cart state
+    applyClientSideFilters();
 
     // Attach filter event listeners
     const searchInput = document.getElementById('search-room');
     const roomTypeSelect = document.getElementById('room-type');
     const guestsSelect = document.getElementById('guests');
     const priceSelect = document.getElementById('price-select');
-    const resetButton = document.getElementById('reset-filters');
 
     if (searchInput) searchInput.addEventListener('input', applyClientSideFilters);
     if (roomTypeSelect) roomTypeSelect.addEventListener('change', applyClientSideFilters);
     if (guestsSelect) guestsSelect.addEventListener('change', applyClientSideFilters);
     if (priceSelect) priceSelect.addEventListener('change', applyClientSideFilters);
-    if (resetButton) resetButton.addEventListener('click', resetFilters);
 });

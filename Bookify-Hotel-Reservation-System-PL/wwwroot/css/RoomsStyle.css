@@ -7,14 +7,40 @@
     position: fixed;
     top: 88px;
     right: 20px;
-    background: rgba(255,255,255,0.7);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 10px;
-    border-radius: 10px;
-    box-shadow: 0 6px 18px rgba(13,38,76,0.08);
+    background: rgba(255,255,255,0.9);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 12px 16px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(13,38,76,0.12);
     cursor: pointer;
     z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(11,58,102,0.1);
+}
+
+.cart:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(13,38,76,0.18);
+}
+
+.cart i {
+    font-size: 1.3rem;
+    color: #0b3a66;
+}
+
+#cart-count {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 22px;
+    text-align: center;
 }
 
 #cart-popup {
@@ -22,71 +48,103 @@
     position: fixed;
     top: 140px;
     right: 20px;
-    background: rgba(255,255,255,0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(10,20,40,0.08);
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 20px;
+    border-radius: 16px;
+    box-shadow: 0 12px 40px rgba(10,20,40,0.15);
     z-index: 1001;
-    width: 300px;
-    border: 1px solid rgba(255,255,255,0.35);
+    width: 380px;
+    max-width: calc(100vw - 40px);
+    border: 1px solid rgba(255,255,255,0.5);
+    max-height: calc(100vh - 180px);
+    overflow-y: auto;
 }
 
     #cart-popup h3 {
-        margin: 0 0 8px;
+        margin: 0 0 16px;
         color: #0b3a66;
-        font-size: 1rem;
+        font-size: 1.25rem;
+        font-weight: 700;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 10px;
     }
 
+#cart-items {
+    max-height: calc(100vh - 360px);
+    overflow-y: auto;
+}
+
 .cart-item {
-    border-bottom: 1px solid rgba(11,58,102,0.06);
+    border-bottom: 1px solid rgba(11,58,102,0.08);
     padding: 8px 0;
     position: relative;
     color: #0f1724;
 }
 
+.cart-item:last-child {
+    border-bottom: none;
+}
+
 .cart-remove {
     position: absolute;
-    top: 5px;
+    top: 10px;
     right: 0;
     background: #e74c3c;
     color: #fff;
     border: none;
-    padding: 3px 6px;
-    border-radius: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
     cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.3s ease;
 }
 
     .cart-remove:hover {
         background: #c0392b;
+        transform: scale(1.1);
     }
 
 .cart-button {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #3b82f6;
+    margin-top: 12px;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: #fff;
     border: none;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
     width: 100%;
+    font-weight: 700;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.cart-button:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
 }
 
 /* Toast */
 #toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255,255,255,0.85);
-    padding: 10px 14px;
+    bottom: 30px;
+    right: 30px;
+    background: rgba(255,255,255,0.95);
+    padding: 14px 20px;
     border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(8,48,108,0.08);
+    box-shadow: 0 8px 24px rgba(8,48,108,0.15);
     display: none;
     z-index: 2000;
-    border: 1px solid rgba(255,255,255,0.4);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    font-weight: 600;
+    font-size: 0.95rem;
+    min-width: 200px;
+    text-align: center;
 }
 
 /* Section header & filters */
