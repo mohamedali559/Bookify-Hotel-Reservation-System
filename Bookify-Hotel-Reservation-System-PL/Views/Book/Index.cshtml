@@ -1,84 +1,71 @@
 ﻿@{
-    ViewData["Title"] = "Book";
+    ViewData["Title"] = "Book Your Stay";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Golden Horizon - Booking</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+@section Styles {
     <link rel="stylesheet" href="~/css/book.css">
-</head>
-<body>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+}
 
-    <section class="hero-section">
-        <div class="hero-overlay"></div>
-        <div>
-            <h1>Book Your Stay</h1>
-            <p>Reserve your room and complete your payment safely and securely.</p>
-        </div>
-    </section>
-
-    <section id="room-details" class="room-details"></section>
-
-    <div class="booking-container">
-        <h2>Reservation Details</h2>
-
-        <form id="bookingForm">
-            <div>
-                <label>Full Name</label>
-                <input type="text" id="name" required>
-            </div>
-
-            <div>
-                <label>Email Address</label>
-                <input type="email" id="email" required>
-            </div>
-
-            <div>
-                <label>Number of Guests</label>
-                <select id="guests" required>
-                    <option value="">Select number of guests</option>
-                    <option value="1">1 Guest</option>
-                    <option value="2">2 Guests</option>
-                    <option value="3">3 Guests</option>
-                    <option value="4">4 Guests</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Room Type</label>
-                <select id="room" required>
-                    <option value="">Select a room</option>
-                    <option value="luxury">Luxury King Room</option>
-                    <option value="suite">Ocean View Suite</option>
-                    <option value="standard">Standard Room</option>
-                </select>
-            </div>
-
-            <div>
-                <label>Check-in Date</label>
-                <input type="date" id="checkin" required>
-            </div>
-
-            <div>
-                <label>Check-out Date</label>
-                <input type="date" id="checkout" required>
-            </div>
-
-            <button type="button" id="goPayment" class="confirm-btn">To Payment</button>
-        </form>
-
-        <div class="cancel-btn">
-            <a href="rooms.html">Cancel</a>
-        </div>
+<section class="hero-section">
+    <div class="hero-overlay"></div>
+    <div>
+        <h1>Book Your Stay</h1>
+        <p>Reserve your room and complete your payment safely and securely.</p>
     </div>
+</section>
 
+<section id="room-details" class="room-details"></section>
+
+<div class="booking-container">
+    <h2>Reservation Details</h2>
+
+    <form id="bookingForm">
+        <div>
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter your full name" required>
+        </div>
+
+        <div>
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your.email@example.com" required>
+        </div>
+
+        <div>
+            <label for="guests">Number of Guests</label>
+            <select id="guests" required>
+                <option value="">Select number of guests</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="room">Selected Room</label>
+            <select id="room" required disabled>
+                <option value="">Loading...</option>
+            </select>
+        </div>
+
+        <div>
+            <label for="checkin">Check-in Date</label>
+            <input type="date" id="checkin" required>
+        </div>
+
+        <div>
+            <label for="checkout">Check-out Date</label>
+            <input type="date" id="checkout" required>
+        </div>
+
+        <button type="button" id="goPayment" class="confirm-btn">
+            <i class="fas fa-credit-card"></i> Proceed to Payment
+        </button>
+    </form>
+
+    <div class="cancel-btn">
+        <a href="/Room"><i class="fas fa-arrow-left"></i> Back to Rooms</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script src="~/js/book.js"></script>
-</body>
-</html>
+}
