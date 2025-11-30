@@ -279,9 +279,11 @@
 /* buttons */
 .room-buttons {
     display: flex;
+    flex-direction: row;
     gap: 10px;
     align-items: center;
     margin-top: 10px;
+    width: 100%;
 }
 
     .room-buttons button, .room-buttons a {
@@ -296,6 +298,7 @@
         text-decoration: none;
         text-align: center;
         display: inline-block;
+        white-space: nowrap;
     }
 
     .room-buttons .add-cart {
