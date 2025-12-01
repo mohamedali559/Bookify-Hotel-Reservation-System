@@ -1,0 +1,296 @@
+@model LoginViewModel
+
+@{
+    ViewData["Title"] = "Login - Bookify";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .login-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 900px;
+            width: 100%;
+            display: flex;
+            margin: 20px;
+        }
+
+        .login-image {
+            flex: 1;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)),
+                        url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .login-image h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .login-image p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .login-form-container {
+            flex: 1;
+            padding: 50px 40px;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        .login-header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            outline: none;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .form-control.with-icon {
+            padding-right: 45px;
+        }
+
+        .form-check {
+            margin-bottom: 20px;
+        }
+
+        .form-check-input {
+            width: 18px;
+            height: 18px;
+            margin-top: 0.15em;
+        }
+
+        .form-check-label {
+            margin-left: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            width: 45%;
+            height: 1px;
+            background: #ddd;
+        }
+
+        .divider span {
+            color: #999;
+            font-size: 0.85rem;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        @@media (max-width: 768px) {
+            .login-container {
+                flex-direction: column;
+            }
+
+            .login-image {
+                padding: 30px;
+                min-height: 200px;
+            }
+
+            .login-form-container {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+}
+
+<div class="login-container">
+    <div class="login-image">
+        <div>
+            <h2><i class="fas fa-hotel"></i> Bookify</h2>
+            <p>Your Gateway to Luxury Accommodations</p>
+        </div>
+    </div>
+
+    <div class="login-form-container">
+        <div class="login-header">
+            <h1>Welcome Back!</h1>
+            <p>Sign in to continue to your account</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Login" method="post">
+            <input type="hidden" asp-for="@ViewData["ReturnUrl"]" />
+            
+            <div class="form-group">
+                <label asp-for="Email">Email Address</label>
+                <div class="input-with-icon">
+                    <input asp-for="Email" class="form-control with-icon" placeholder="Enter your email" />
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Password">Password</label>
+                <div class="input-with-icon">
+                    <input asp-for="Password" class="form-control with-icon" placeholder="Enter your password" />
+                    <i class="fas fa-lock"></i>
+                </div>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-check">
+                <input asp-for="RememberMe" class="form-check-input" type="checkbox" />
+                <label asp-for="RememberMe" class="form-check-label">
+                    Remember me
+                </label>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+
+            <div class="divider">
+                <span>OR</span>
+            </div>
+
+            <div class="form-footer">
+                <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Create Account</a></p>
+                <p><a href="#">Forgot Password?</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

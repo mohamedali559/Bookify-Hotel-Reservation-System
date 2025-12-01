@@ -1,0 +1,304 @@
+@model RegisterViewModel
+
+@{
+    ViewData["Title"] = "Register - Bookify";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px 0;
+        }
+
+        .register-container {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            max-width: 1000px;
+            width: 100%;
+            display: flex;
+            margin: 20px;
+        }
+
+        .register-image {
+            flex: 0 0 400px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)),
+                        url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3') center/cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .register-image h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .register-image p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .register-form-container {
+            flex: 1;
+            padding: 50px 40px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .register-header h1 {
+            color: #667eea;
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .register-header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+            outline: none;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .form-control.with-icon {
+            padding-right: 45px;
+        }
+
+        .btn-register {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-register:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .form-footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .text-danger {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .password-strength {
+            font-size: 0.85rem;
+            margin-top: 5px;
+            color: #666;
+        }
+
+        @@media (max-width: 992px) {
+            .register-container {
+                flex-direction: column;
+            }
+
+            .register-image {
+                flex: 0 0 auto;
+                padding: 30px;
+                min-height: 200px;
+            }
+
+            .register-form-container {
+                padding: 30px 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+}
+
+<div class="register-container">
+    <div class="register-image">
+        <div>
+            <h2><i class="fas fa-hotel"></i> Bookify</h2>
+            <p>Join thousands of travelers who trust Bookify for their accommodation needs</p>
+            <div style="margin-top: 30px;">
+                <p><i class="fas fa-check-circle"></i> Secure Booking</p>
+                <p><i class="fas fa-check-circle"></i> Best Price Guarantee</p>
+                <p><i class="fas fa-check-circle"></i> 24/7 Support</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="register-form-container">
+        <div class="register-header">
+            <h1>Create Account</h1>
+            <p>Start your journey with us today</p>
+        </div>
+
+        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+        {
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i>
+                @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+            </div>
+        }
+
+        <form asp-controller="Account" asp-action="Register" method="post">
+            <div class="form-group">
+                <label asp-for="FullName">Full Name <span style="color: red;">*</span></label>
+                <div class="input-with-icon">
+                    <input asp-for="FullName" class="form-control with-icon" placeholder="Enter your full name" />
+                    <i class="fas fa-user"></i>
+                </div>
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Email">Email Address <span style="color: red;">*</span></label>
+                <div class="input-with-icon">
+                    <input asp-for="Email" class="form-control with-icon" placeholder="Enter your email" />
+                    <i class="fas fa-envelope"></i>
+                </div>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password">Password <span style="color: red;">*</span></label>
+                    <div class="input-with-icon">
+                        <input asp-for="Password" class="form-control with-icon" placeholder="Enter password" />
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                    <small class="password-strength">At least 6 characters with upper & lowercase</small>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword">Confirm Password <span style="color: red;">*</span></label>
+                    <div class="input-with-icon">
+                        <input asp-for="ConfirmPassword" class="form-control with-icon" placeholder="Confirm password" />
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="PhoneNumber">Phone Number</label>
+                    <div class="input-with-icon">
+                        <input asp-for="PhoneNumber" class="form-control with-icon" placeholder="Enter phone number" />
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="Address">Address</label>
+                    <div class="input-with-icon">
+                        <input asp-for="Address" class="form-control with-icon" placeholder="Enter your address" />
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <span asp-validation-for="Address" class="text-danger"></span>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-register">
+                <i class="fas fa-user-plus"></i> Create Account
+            </button>
+
+            <div class="form-footer">
+                <p>Already have an account? <a asp-controller="Account" asp-action="Login">Sign In</a></p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

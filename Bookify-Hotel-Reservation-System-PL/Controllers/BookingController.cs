@@ -1,9 +1,11 @@
 ﻿using Bookify_Hotel_Reservation_System__DAL.Models;
 using Bookify_Hotel_Reservation_System_BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bookify_Hotel_Reservation_System_PL.Controllers
 {
+    [Authorize]
     public class BookingController : Controller
     {
         private readonly IBookingRepository _bookingRepository;

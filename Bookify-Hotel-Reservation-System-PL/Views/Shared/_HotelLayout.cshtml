@@ -9,6 +9,78 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/LayoutStyle.css" />
     @await RenderSectionAsync("Styles", required: false)
+    <style>
+        .user-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-dropdown-toggle {
+            background: none;
+            border: none;
+            color: #0b3a66;
+            cursor: pointer;
+            padding: 8px 15px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-dropdown-toggle:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 5px;
+        }
+
+        .user-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background: white;
+            min-width: 200px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            margin-top: 8px;
+            z-index: 1000;
+        }
+
+        .user-dropdown-menu.show {
+            display: block;
+        }
+
+        .user-dropdown-menu a,
+        .user-dropdown-menu button {
+            display: block;
+            width: 100%;
+            padding: 12px 20px;
+            text-decoration: none;
+            color: #333;
+            border: none;
+            background: none;
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .user-dropdown-menu a:hover,
+        .user-dropdown-menu button:hover {
+            background: #f5f5f5;
+        }
+
+        .user-dropdown-menu a i,
+        .user-dropdown-menu button i {
+            margin-right: 10px;
+            width: 20px;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background: #e0e0e0;
+            margin: 8px 0;
+        }
+    </style>
 </head>
 
 <body>
@@ -33,7 +105,14 @@
                 <a asp-controller="Gallery" asp-action="Index" class="@(currentController == "Gallery" ? "active" : "")">Gallery</a>
                 <a asp-controller="About" asp-action="Index" class="@(currentController == "About" ? "active" : "")">About</a>
                 <a asp-controller="Contact" asp-action="Index" class="@(currentController == "Contact" ? "active" : "")">Contact</a>
-
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <a asp-controller="Booking" asp-action="Index" class="@(currentController == "Booking" ? "active" : "")">My Bookings</a>
+                }
+                @if (User.IsInRole("Admin"))
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="@(currentController == "Admin" ? "active" : "")">Admin</a>
+                }
             </div>
 
             <!-- Hamburger (mobile) -->
@@ -43,7 +122,35 @@
 
             <!-- User Section -->
             <div class="user-section d-flex gap-2" id="user-section">
-                <a asp-controller="Account" asp-action="Login">Log In</a>
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="user-dropdown">
+                        <button class="user-dropdown-toggle" onclick="toggleUserDropdown()">
+                            <i class="fas fa-user-circle"></i>
+                            <span>@User.Identity.Name</span>
+                            <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
+                        </button>
+                        <div class="user-dropdown-menu" id="userDropdownMenu">
+                            <a href="#">
+                                <i class="fas fa-user"></i> Profile
+                            </a>
+                            <a asp-controller="Booking" asp-action="Index">
+                                <i class="fas fa-calendar-alt"></i> My Bookings
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <form method="post" asp-controller="Account" asp-action="Logout" style="margin: 0;">
+                                <button type="submit">
+                                    <i class="fas fa-sign-out-alt"></i> Logout
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="Login">Log In</a>
+                    <a asp-controller="Account" asp-action="Register" style="margin-left: 10px;">Register</a>
+                }
             </div>
 
         </div>
@@ -98,6 +205,25 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        function toggleUserDropdown() {
+            var dropdown = document.getElementById('userDropdownMenu');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.user-dropdown-toggle') && !event.target.closest('.user-dropdown-toggle')) {
+                var dropdowns = document.getElementsByClassName("user-dropdown-menu");
+                for (var i = 0; i < dropdowns.length; i++) {
+                    var openDropdown = dropdowns[i];
+                    if (openDropdown.classList.contains('show')) {
+                        openDropdown.classList.remove('show');
+                    }
+                }
+            }
+        }
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 

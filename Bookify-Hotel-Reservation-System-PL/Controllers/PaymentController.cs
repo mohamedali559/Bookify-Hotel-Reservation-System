@@ -1,11 +1,13 @@
 ﻿using Bookify_Hotel_Reservation_System__DAL.Models;
 using Bookify_Hotel_Reservation_System_BLL.Interfaces;
 using Bookify_Hotel_Reservation_System_PL.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bookify_Hotel_Reservation_System_PL.Controllers
 {
+    [Authorize]
     public class PaymentController : Controller
     {
         private readonly IPaymentRepository _paymentRepository;
