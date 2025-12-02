@@ -126,6 +126,8 @@ app.Run();
 // Seed Roles and Admin User
 static async Task SeedRolesAndAdminAsync(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)
 {
+    Console.WriteLine("Seeding Admin User...");
+
     // Create roles if they don't exist
     string[] roleNames = { "Admin", "User" };
     
@@ -148,14 +150,26 @@ static async Task SeedRolesAndAdminAsync(RoleManager<ApplicationRole> roleManage
             UserName = adminEmail,
             Email = adminEmail,
             FullName = "System Administrator",
-            EmailConfirmed = true
+            EmailConfirmed = true,
+            Address = "mansoura"
         };
 
         var result = await userManager.CreateAsync(admin, "Admin@123");
 
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            await userManager.AddToRoleAsync(admin, "Admin");
+            Console.WriteLine("ERROR CREATING USER:");
+            foreach (var error in result.Errors)
+                Console.WriteLine($" - {error.Code}: {error.Description}");
+        }
+
+        var roleResult = await userManager.AddToRoleAsync(admin, "Admin");
+
+        if (!roleResult.Succeeded)
+        {
+            Console.WriteLine("ERROR ADDING ROLE:");
+            foreach (var error in roleResult.Errors)
+                Console.WriteLine($" - {error.Code}: {error.Description}");
         }
     }
 }
