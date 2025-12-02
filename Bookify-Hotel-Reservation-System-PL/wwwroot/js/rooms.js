@@ -1,51 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 
     /* ===========================
-       USER SECTION
-    ============================ */
-    const userSection = document.getElementById("user-section");
-    const navLinks = document.getElementById("nav-links");
-
-    const loggedUser = localStorage.getItem("loggedUser");
-    const userType = localStorage.getItem("userType");
-
-    if (loggedUser) {
-        const displayName = loggedUser.includes("@") ? loggedUser.split("@")[0] : loggedUser;
-
-        if (userType === "admin") {
-            const adminLink = document.createElement("a");
-            adminLink.href = "AdminPanel.html";
-            adminLink.textContent = "Admin Dashboard";
-            adminLink.className = "hover:text-[#cbb58f] transition";
-            const contactLink = navLinks.querySelector('a:last-child');
-            if (contactLink) navLinks.insertBefore(adminLink, contactLink);
-        }
-
-        userSection.innerHTML = `
-        <div class="flex items-center space-x-3 text-[#e5e3df]">
-            <a href="${userType === 'admin' ? '#' : 'profile.html'}" 
-                class="bg-[#cbb58f] text-[#2e2b29] px-4 py-2 rounded-lg font-semibold hover:bg-[#d7c29b] transition flex items-center gap-2"
-                ${userType === 'admin' ? 'onclick="return false;"' : ''}>
-            <i class="fa-solid fa-user"></i> ${displayName}
-            </a>
-            <a href="#" id="logout-btn" class="bg-[#cbb58f] text-[#2e2b29] px-4 py-2 rounded-lg font-medium hover:bg-[#d7c29b] transition inline-block mr-4">
-            Logout
-            </a>
-        </div>
-        `;
-
-        document.getElementById("logout-btn")?.addEventListener("click", () => {
-            localStorage.removeItem("loggedUser");
-            localStorage.removeItem("userType");
-            location.reload();
-        });
-    } else {
-        userSection.innerHTML = `
-      <a href="/login">Log In</a>
-    `;
-    }
-
-    /* ===========================
        CART + TOAST
     ============================ */
     let cart = [];
@@ -66,7 +21,7 @@ document.addEventListener("DOMContentLoaded", () => {
             size: card.querySelectorAll(".features span")[2]?.innerText || "",
             price: parseInt(card.querySelectorAll(".features span")[3]?.innerText.replace('$', '')) || 0,
             type: card.dataset.type ?? "",
-            image: card.querySelector("img")?.src || "",  // ? ??? ???? ??????
+            image: card.querySelector("img")?.src || "",
             element: card
         };
     }
@@ -109,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    document.getElementById("main-cart").addEventListener("click", () => {
+    document.getElementById("main-cart")?.addEventListener("click", () => {
         const popup = document.getElementById("cart-popup");
         popup.style.display = popup.style.display === "block" ? "none" : "block";
         if (popup.style.display === "block") renderCartItems();
@@ -173,43 +128,48 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-<<<<<<< HEAD
     /* ===========================
        FILTERS
     ============================ */
 
-    document.addEventListener("DOMContentLoaded", () => {
+    // Apply Filters (Call Server)
+    async function applyFilters() {
+        const search = document.getElementById("search-room")?.value || "";
+        const type = document.getElementById("room-type")?.value || "";
+        const guests = document.getElementById("guests")?.value || "";
+        const price = document.getElementById("price-select")?.value || "";
 
-        // Apply Filters (Call Server)
-        async function applyFilters() {
-            const search = document.getElementById("search-room").value;
-            const type = document.getElementById("room-type").value;
-            const guests = document.getElementById("guests").value;
-            const price = document.getElementById("price-select").value;
+        const url = `/Room/Filter?search=${search}&type=${type}&guests=${guests}&price=${price}`;
 
-            const url = `/Room/Filter?search=${search}&type=${type}&guests=${guests}&price=${price}`;
+        const container = document.getElementById("rooms-container");
+        if (!container) return;
+        
+        container.innerHTML = "<p class='loading-message'>Loading...</p>";
 
-            const container = document.getElementById("rooms-container");
-            container.innerHTML = "<p class='loading-message'>Loading...</p>";
-
+        try {
             const response = await fetch(url);
             const rooms = await response.json();
-
             renderRooms(rooms);
+        } catch (error) {
+            console.error("Error fetching rooms:", error);
+            container.innerHTML = "<p>Error loading rooms. Please try again.</p>";
+        }
+    }
+
+    // Render Rooms
+    function renderRooms(rooms) {
+        const container = document.getElementById("rooms-container");
+        if (!container) return;
+        
+        container.innerHTML = "";
+
+        if (rooms.length === 0) {
+            container.innerHTML = "<p>No rooms found.</p>";
+            return;
         }
 
-        // Render Rooms
-        function renderRooms(rooms) {
-            const container = document.getElementById("rooms-container");
-            container.innerHTML = "";
-
-            if (rooms.length === 0) {
-                container.innerHTML = "<p>No rooms found.</p>";
-                return;
-            }
-
-            rooms.forEach(room => {
-                container.innerHTML += `
+        rooms.forEach(room => {
+            container.innerHTML += `
                 <div class="room-card">
                     <img src="${room.imageUrl}" alt="${room.roomTypeName}">
                     <div class="room-info">
@@ -232,52 +192,13 @@ document.addEventListener("DOMContentLoaded", () => {
                     </div>
                 </div>
             `;
-            });
-        }
+        });
+    }
 
-        // Events
-        document.getElementById("search-room").addEventListener("input", applyFilters);
-        document.getElementById("room-type").addEventListener("change", applyFilters);
-        document.getElementById("guests").addEventListener("change", applyFilters);
-        document.getElementById("price-select").addEventListener("change", applyFilters);
-    });
+    // Events
+    document.getElementById("search-room")?.addEventListener("input", applyFilters);
+    document.getElementById("room-type")?.addEventListener("change", applyFilters);
+    document.getElementById("guests")?.addEventListener("change", applyFilters);
+    document.getElementById("price-select")?.addEventListener("change", applyFilters);
 
-=======
-//    /* ===========================
-//       FILTERS
-//    ============================ */
-//    function applyFilters() {
-//        const search = document.getElementById("search-room").value.toLowerCase();
-//        const type = document.getElementById("room-type").value;
-//        const guests = document.getElementById("guests").value;
-//        const maxPrice = document.getElementById("price-select").value;
-
-//        let min = 0, max = Infinity;
-//        if (maxPrice) {
-//            [min, max] = maxPrice.split('-').map(Number);
-//        }
-
-//        const filtered = rooms.filter(room => {
-//            if (!room.name.toLowerCase().includes(search)) return false;
-//            if (type && room.type !== type) return false;
-//            if (guests && room.guests != guests) return false;
-//            if (room.price < min || room.price > max) return false;
-//            return true;
-//        });
-
-//        renderRooms(filtered);
-//    }
-
-//    function renderRooms(filteredRooms) {
-//        const container = document.getElementById("rooms-container");
-//        container.innerHTML = "";
-//        filteredRooms.forEach(r => container.appendChild(r.element));
-//    }
-
-//    document.getElementById("search-room").addEventListener("input", applyFilters);
-//    document.getElementById("room-type").addEventListener("change", applyFilters);
-//    document.getElementById("guests").addEventListener("change", applyFilters);
-//    document.getElementById("price-select").addEventListener("change", applyFilters);
-
-//});
->>>>>>> 326d8e20421d4f00ead55a5a95ec83a2eadec5d8
+});

@@ -84,6 +84,23 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+// Add cache control for dynamic pages (not static assets)
+app.Use(async (context, next) =>
+{
+    // Only apply to non-static file requests
+    if (!context.Request.Path.StartsWithSegments("/lib") && 
+        !context.Request.Path.StartsWithSegments("/css") && 
+        !context.Request.Path.StartsWithSegments("/js") &&
+        !context.Request.Path.StartsWithSegments("/images"))
+    {
+        context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+        context.Response.Headers["Pragma"] = "no-cache";
+        context.Response.Headers["Expires"] = "0";
+    }
+    await next();
+});
+
 app.UseRouting();
 
 // Authentication must come before Authorization
@@ -91,6 +108,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+
+// Redirect root URL to /Home/Index to show full path
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/Home/Index", permanent: false);
+    return Task.CompletedTask;
+});
 
 app.MapControllerRoute(
     name: "default",

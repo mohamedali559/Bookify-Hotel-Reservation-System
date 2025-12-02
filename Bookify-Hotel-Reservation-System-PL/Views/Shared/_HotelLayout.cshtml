@@ -1,13 +1,16 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewBag.title</title>
+    <title>@ViewData["Title"] - Golden Horizon</title>
     <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2357/2357000.png">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="~/css/LayoutStyle.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/Bookify_Hotel_Reservation_System_PL.styles.css" asp-append-version="true" />
     @await RenderSectionAsync("Styles", required: false)
     <style>
         .user-dropdown {
@@ -86,6 +89,9 @@
 <body>
     @{
         var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var isAuthenticated = User?.Identity?.IsAuthenticated ?? false;
+        var userName = User?.Identity?.Name ?? "Guest";
+        var isAdmin = User?.IsInRole("Admin") ?? false;
     }
     
     <nav class="navbar">
@@ -99,19 +105,35 @@
 
             <!-- Nav Links -->
             <div class="nav-links d-flex align-items-center gap-3" id="nav-links">
-                <a asp-controller="Home" asp-action="Index" class="@(currentController == "Home" ? "active" : "")">Home</a>
-                <a asp-controller="Room" asp-action="Index" class="@(currentController == "Room" ? "active" : "")">Rooms</a>
-                <a asp-controller="Amenity" asp-action="Index" class="@(currentController == "Amenity" ? "active" : "")">Amenities</a>
-                <a asp-controller="Gallery" asp-action="Index" class="@(currentController == "Gallery" ? "active" : "")">Gallery</a>
-                <a asp-controller="About" asp-action="Index" class="@(currentController == "About" ? "active" : "")">About</a>
-                <a asp-controller="Contact" asp-action="Index" class="@(currentController == "Contact" ? "active" : "")">Contact</a>
-                @if (User.Identity?.IsAuthenticated == true)
+                <a asp-controller="Home" asp-action="Index" class="@(currentController == "Home" ? "active" : "")">
+                    <i class="fas fa-home"></i> Home
+                </a>
+                <a asp-controller="Room" asp-action="Index" class="@(currentController == "Room" ? "active" : "")">
+                    <i class="fas fa-bed"></i> Rooms
+                </a>
+                <a asp-controller="Amenity" asp-action="Index" class="@(currentController == "Amenity" ? "active" : "")">
+                    <i class="fas fa-concierge-bell"></i> Amenities
+                </a>
+                <a asp-controller="Gallery" asp-action="Index" class="@(currentController == "Gallery" ? "active" : "")">
+                    <i class="fas fa-images"></i> Gallery
+                </a>
+                <a asp-controller="About" asp-action="Index" class="@(currentController == "About" ? "active" : "")">
+                    <i class="fas fa-info-circle"></i> About
+                </a>
+                <a asp-controller="Contact" asp-action="Index" class="@(currentController == "Contact" ? "active" : "")">
+                    <i class="fas fa-envelope"></i> Contact
+                </a>
+                @if (isAuthenticated)
                 {
-                    <a asp-controller="Booking" asp-action="Index" class="@(currentController == "Booking" ? "active" : "")">My Bookings</a>
+                    <a asp-controller="Booking" asp-action="Index" class="@(currentController == "Booking" ? "active" : "")">
+                        <i class="fas fa-calendar-check"></i> My Bookings
+                    </a>
                 }
-                @if (User.IsInRole("Admin"))
+                @if (isAdmin)
                 {
-                    <a asp-controller="Admin" asp-action="Index" class="@(currentController == "Admin" ? "active" : "")">Admin</a>
+                    <a asp-controller="Admin" asp-action="Index" class="@(currentController == "Admin" ? "active" : "")">
+                        <i class="fas fa-cog"></i> Admin
+                    </a>
                 }
             </div>
 
@@ -122,12 +144,17 @@
 
             <!-- User Section -->
             <div class="user-section d-flex gap-2" id="user-section">
-                @if (User.Identity?.IsAuthenticated == true)
+                @{
+                    var loginUrl = Url.Action("Login", "Account");
+                    var registerUrl = Url.Action("Register", "Account");
+                }
+                
+                @if (isAuthenticated)
                 {
                     <div class="user-dropdown">
                         <button class="user-dropdown-toggle" onclick="toggleUserDropdown()">
                             <i class="fas fa-user-circle"></i>
-                            <span>@User.Identity.Name</span>
+                            <span>@userName</span>
                             <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
                         </button>
                         <div class="user-dropdown-menu" id="userDropdownMenu">
@@ -136,6 +163,9 @@
                             </a>
                             <a asp-controller="Booking" asp-action="Index">
                                 <i class="fas fa-calendar-alt"></i> My Bookings
+                            </a>
+                            <a asp-controller="Home" asp-action="Privacy">
+                                <i class="fas fa-shield-alt"></i> Privacy Policy
                             </a>
                             <div class="dropdown-divider"></div>
                             <form method="post" asp-controller="Account" asp-action="Logout" style="margin: 0;">
@@ -148,8 +178,14 @@
                 }
                 else
                 {
-                    <a asp-controller="Account" asp-action="Login">Log In</a>
-                    <a asp-controller="Account" asp-action="Register" style="margin-left: 10px;">Register</a>
+                    <!-- DEBUG: Login URL: @loginUrl | Register URL: @registerUrl -->
+                    
+                    <a asp-controller="Account" asp-action="Login" data-debug-url="@loginUrl">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a asp-controller="Account" asp-action="Register" data-debug-url="@registerUrl">
+                        <i class="fas fa-user-plus"></i> Register
+                    </a>
                 }
             </div>
 
@@ -161,7 +197,7 @@
     @RenderSection("Hero", required: false)
 
     <!-- PAGE CONTENT -->
-    <main role="main" class="pb-1">
+    <main role="main" class="pb-3">
         @RenderBody()
     </main>
 
@@ -184,21 +220,22 @@
                     <li><a asp-controller="Room" asp-action="Index">Rooms</a></li>
                     <li><a asp-controller="Gallery" asp-action="Index">Gallery</a></li>
                     <li><a asp-controller="Contact" asp-action="Index">Contact</a></li>
+                    <li><a asp-controller="Home" asp-action="Privacy">Privacy</a></li>
                 </ul>
             </div>
 
             <div class="footer-social">
                 <h3>Follow Us</h3>
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
         </div>
 
         <div class="footer-bottom">
-            © 2025 Golden Horizon. All rights reserved.
+            &copy; @DateTime.Now.Year Golden Horizon Hotel. All rights reserved.
         </div>
     </footer>
 
@@ -223,6 +260,18 @@
                 }
             }
         }
+
+        // Hamburger menu toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.getElementById('hamburger');
+            const navLinks = document.getElementById('nav-links');
+            
+            if (hamburger && navLinks) {
+                hamburger.addEventListener('click', function() {
+                    navLinks.classList.toggle('active');
+                });
+            }
+        });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>

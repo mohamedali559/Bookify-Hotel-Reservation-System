@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Golden Horizon - Login";
-    Layout = "_AuthLayout";
+    Layout = "_HotelLayout";
 }
 
 @section Styles {
@@ -24,8 +24,9 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             width: 100%;
+            min-height: calc(100vh - 200px);
         }
 
         .login-card {
@@ -155,7 +156,7 @@
             margin-bottom: 30px;
         }
 
-        .logo-box {
+        .logo-box-login {
             background-color: #08306C;
             color: white;
             font-weight: bold;
@@ -164,7 +165,7 @@
             font-size: 1.2rem;
         }
 
-        .logo-text {
+        .logo-text-login {
             font-size: 1.5rem;
             font-weight: 600;
             color: #25408f;
@@ -175,8 +176,8 @@
 <div class="login-wrapper">
     <div class="login-card">
         <div class="logo-header">
-            <div class="logo-box">GH</div>
-            <h1 class="logo-text">Golden Horizon</h1>
+            <div class="logo-box-login">GH</div>
+            <h1 class="logo-text-login">Golden Horizon</h1>
         </div>
 
         <h2>Welcome Back!</h2>

@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Golden Horizon - Register";
-    Layout = "_AuthLayout";
+    Layout = "_HotelLayout";
 }
 
 @section Styles {
@@ -10,23 +10,15 @@
     <style>
         body {
             background-color: #e6f0fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            color: #1e2d4d;
-            margin: 0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 20px 0;
         }
 
         .login-wrapper {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 40px 20px;
+            padding: 60px 20px;
             width: 100%;
+            min-height: calc(100vh - 200px);
         }
 
         .login-card {
@@ -149,7 +141,7 @@
             margin-bottom: 30px;
         }
 
-        .logo-box {
+        .logo-box-register {
             background-color: #08306C;
             color: white;
             font-weight: bold;
@@ -158,7 +150,7 @@
             font-size: 1.2rem;
         }
 
-        .logo-text {
+        .logo-text-register {
             font-size: 1.5rem;
             font-weight: 600;
             color: #25408f;
@@ -184,8 +176,8 @@
 <div class="login-wrapper">
     <div class="login-card">
         <div class="logo-header">
-            <div class="logo-box">GH</div>
-            <h1 class="logo-text">Golden Horizon</h1>
+            <div class="logo-box-register">GH</div>
+            <h1 class="logo-text-register">Golden Horizon</h1>
         </div>
 
         <h2>Create Account</h2>
