@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/CODE_PATCHES.md
+/FINAL_FIX_COMPLETE.md
+/FIX_SUMMARY.md
+/JAVASCRIPT_ROOT_CAUSE.md
+/NAVBAR_DEBUGGING_GUIDE.md
