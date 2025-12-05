@@ -1,0 +1,139 @@
+@model IEnumerable<Bookify_Hotel_Reservation_System__DAL.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/BookingStyle.css" />
+}
+
+<div class="bookings-container">
+    <div class="bookings-header">
+        <h1><i class="fas fa-bookmark"></i> My Bookings</h1>
+        <p>View and manage your hotel reservations</p>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        @foreach (var booking in Model)
+        {
+            <div class="booking-card">
+                <div class="booking-header">
+                    <div class="booking-id">
+                        <i class="fas fa-receipt"></i> Booking #@booking.Id
+                    </div>
+                    <span class="booking-status status-@booking.Status.ToString().ToLower()">
+                        @booking.Status.ToString()
+                    </span>
+                </div>
+
+                <div class="booking-details">
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-door-open"></i> Room Number</span>
+                        <span class="detail-value">@booking.Room.RoomNumber</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-bed"></i> Room Type</span>
+                        <span class="detail-value">@(booking.Room.RoomType?.Name ?? "N/A")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-calendar-check"></i> Check-In</span>
+                        <span class="detail-value">@booking.CheckInDate.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-calendar-times"></i> Check-Out</span>
+                        <span class="detail-value">@booking.CheckOutDate.ToString("MMM dd, yyyy")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-moon"></i> Nights</span>
+                        <span class="detail-value">@((booking.CheckOutDate - booking.CheckInDate).Days)</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-dollar-sign"></i> Total Price</span>
+                        <span class="detail-value">$@booking.Price.ToString("N2")</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label"><i class="fas fa-clock"></i> Booked On</span>
+                        <span class="detail-value">@booking.CreatedAt.ToString("MMM dd, yyyy")</span>
+                    </div>
+                </div>
+
+                @if (booking.Status != Bookify_Hotel_Reservation_System__DAL.Models.BookingStatus.Cancelled && 
+                     booking.Status != Bookify_Hotel_Reservation_System__DAL.Models.BookingStatus.Completed)
+                {
+                    <div class="booking-actions">
+                        <button class="btn-cancel" onclick="cancelBooking(@booking.Id)">
+                            <i class="fas fa-times-circle"></i> Cancel Booking
+                        </button>
+                    </div>
+                }
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="fas fa-calendar-times"></i>
+            <h3>No Bookings Found</h3>
+            <p>You haven't made any reservations yet. Start exploring our rooms!</p>
+            <a href="@Url.Action("Index", "Room")" class="btn-browse">
+                <i class="fas fa-search"></i> Browse Rooms
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        async function cancelBooking(bookingId) {
+            const result = await Swal.fire({
+                title: 'Cancel Booking?',
+                text: "Are you sure you want to cancel this booking?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Yes, cancel it!',
+                cancelButtonText: 'No, keep it'
+            });
+
+            if (result.isConfirmed) {
+                try {
+                    const response = await fetch('/Book/CancelBooking', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(bookingId)
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        await Swal.fire({
+                            title: 'Cancelled!',
+                            text: data.message,
+                            icon: 'success'
+                        });
+                        location.reload();
+                    } else {
+                        await Swal.fire({
+                            title: 'Error!',
+                            text: data.message,
+                            icon: 'error'
+                        });
+                    }
+                } catch (error) {
+                    await Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to cancel booking. Please try again.',
+                        icon: 'error'
+                    });
+                }
+            }
+        }
+    </script>
+}

@@ -151,7 +151,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
 
         [HttpPost]
         [Authorize]
-        public IActionResult CancelBooking(int id)
+        public IActionResult CancelBooking([FromBody] int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var booking = _unitOfWork.Bookings.Get(id);

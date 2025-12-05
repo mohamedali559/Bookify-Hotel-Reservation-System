@@ -1,0 +1,276 @@
+@model IEnumerable<Bookify_Hotel_Reservation_System__DAL.Models.Room>
+
+@{
+    ViewData["Title"] = "Rooms Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="management-container">
+    <!-- Header with Add Button -->
+    <div class="management-header">
+        <div>
+            <h2><i class="fas fa-bed"></i> Rooms Management</h2>
+            <p class="text-muted">Manage all hotel rooms and their details</p>
+        </div>
+        <div class="management-actions">
+            <a asp-controller="Admin" asp-action="RoomTypes" class="btn btn-secondary">
+                <i class="fas fa-door-open"></i> Manage Room Types
+            </a>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRoomModal">
+                <i class="fas fa-plus"></i> Add Room
+            </button>
+        </div>
+    </div>
+
+    <!-- Rooms Table -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table id="roomsTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Room ID</th>
+                        <th>Room Number</th>
+                        <th>Floor</th>
+                        <th>Room Type</th>
+                        <th>Price</th>
+                        <th>Availability</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var room in Model)
+                    {
+                        <tr>
+                            <td>@room.Id</td>
+                            <td><strong>@room.RoomNumber</strong></td>
+                            <td>Floor @room.Floor</td>
+                            <td>
+                                <span class="badge badge-room-type">@(room.RoomType?.Name ?? "N/A")</span>
+                            </td>
+                            <td><strong>$@(room.RoomType?.BasePrice.ToString("N2") ?? "0.00")</strong></td>
+                            <td>
+                                @if (room.IsAvailable)
+                                {
+                                    <span class="badge badge-success"><i class="fas fa-check"></i> Available</span>
+                                }
+                                else
+                                {
+                                    <span class="badge badge-danger"><i class="fas fa-times"></i> Occupied</span>
+                                }
+                            </td>
+                            <td>
+                                <img src="@room.ImageUrl" alt="Room Image" class="room-thumb" />
+                            </td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-edit" data-id="@room.Id" title="Edit Room">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="btn btn-sm btn-delete" data-id="@room.Id" title="Delete Room">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Add Room Modal -->
+<div class="modal fade" id="addRoomModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-plus"></i> Add New Room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addRoomForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Room Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="roomNumber" required placeholder="e.g., 101">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Floor <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="floor" required placeholder="e.g., 1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Room Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="roomType" required>
+                                <option value="">Select Room Type</option>
+                                <!-- PLACEHOLDER: Load from backend -->
+                                <option value="1">Single</option>
+                                <option value="2">Double</option>
+                                <option value="3">Suite</option>
+                                <option value="4">Deluxe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Availability <span class="text-danger">*</span></label>
+                            <select class="form-select" id="availability" required>
+                                <option value="true">Available</option>
+                                <option value="false">Occupied</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Image URL <span class="text-danger">*</span></label>
+                            <input type="url" class="form-control" id="imageUrl" required placeholder="https://example.com/image.jpg">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="addRoomForm" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Add Room
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Room Modal -->
+<div class="modal fade" id="editRoomModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-edit"></i> Edit Room</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editRoomForm">
+                    <input type="hidden" id="editRoomId">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Room Number <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editRoomNumber" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Floor <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="editFloor" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Room Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editRoomType" required>
+                                <option value="">Select Room Type</option>
+                                <!-- PLACEHOLDER: Load from backend -->
+                                <option value="1">Single</option>
+                                <option value="2">Double</option>
+                                <option value="3">Suite</option>
+                                <option value="4">Deluxe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Availability <span class="text-danger">*</span></label>
+                            <select class="form-select" id="editAvailability" required>
+                                <option value="true">Available</option>
+                                <option value="false">Occupied</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label">Image URL <span class="text-danger">*</span></label>
+                            <input type="url" class="form-control" id="editImageUrl" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" form="editRoomForm" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            const roomsTable = $('#roomsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [[0, 'asc']],
+                language: {
+                    search: "Search Rooms:",
+                    lengthMenu: "Show _MENU_ rooms per page"
+                }
+            });
+
+            // Add Room Form Submit
+            $('#addRoomForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // PLACEHOLDER: Replace with actual AJAX call to backend
+                const roomData = {
+                    roomNumber: $('#roomNumber').val(),
+                    floor: $('#floor').val(),
+                    roomType: $('#roomType option:selected').text(),
+                    availability: $('#availability').val() === 'true' ? 'Available' : 'Occupied',
+                    imageUrl: $('#imageUrl').val()
+                };
+
+                // Simulate adding to table
+                const newId = roomsTable.rows().count() + 1;
+                roomsTable.row.add([
+                    newId,
+                    '<strong>' + roomData.roomNumber + '</strong>',
+                    'Floor ' + roomData.floor,
+                    '<span class="badge badge-room-type">' + roomData.roomType + '</span>',
+                    '<strong>$150.00</strong>',
+                    '<span class="badge badge-success"><i class="fas fa-check"></i> ' + roomData.availability + '</span>',
+                    '<img src="' + roomData.imageUrl + '" alt="Room" class="room-thumb" />',
+                    '<div class="action-buttons">' +
+                    '<button class="btn btn-sm btn-edit" data-id="' + newId + '"><i class="fas fa-edit"></i></button>' +
+                    '<button class="btn btn-sm btn-delete" data-id="' + newId + '"><i class="fas fa-trash"></i></button>' +
+                    '</div>'
+                ]).draw();
+
+                $('#addRoomModal').modal('hide');
+                this.reset();
+                toastr.success('Room added successfully!');
+            });
+
+            // Edit Room Button Click
+            $('#roomsTable').on('click', '.btn-edit', function() {
+                const roomId = $(this).data('id');
+                const row = $(this).closest('tr');
+                const data = roomsTable.row(row).data();
+
+                // PLACEHOLDER: Load actual data from backend
+                $('#editRoomId').val(data[0]);
+                $('#editRoomNumber').val(data[1].replace('<strong>', '').replace('</strong>', ''));
+                $('#editFloor').val(data[2].replace('Floor ', ''));
+                
+                $('#editRoomModal').modal('show');
+            });
+
+            // Edit Room Form Submit
+            $('#editRoomForm').on('submit', function(e) {
+                e.preventDefault();
+                
+                // PLACEHOLDER: Replace with actual AJAX call to backend
+                $('#editRoomModal').modal('hide');
+                toastr.success('Room updated successfully!');
+            });
+
+            // Delete Room Button Click
+            $('#roomsTable').on('click', '.btn-delete', function() {
+                const roomId = $(this).data('id');
+                const row = $(this).closest('tr');
+
+                if (confirm('Are you sure you want to delete this room?')) {
+                    // PLACEHOLDER: Replace with actual AJAX call to backend
+                    roomsTable.row(row).remove().draw();
+                    toastr.error('Room deleted successfully!');
+                }
+            });
+        });
+    </script>
+}

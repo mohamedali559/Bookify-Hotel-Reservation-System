@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - Admin Panel</title>
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2357/2357000.png">
+    
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Admin Panel CSS -->
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+
+<body>
+    <div class="admin-wrapper">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-header">
+                <div class="logo-box">GH</div>
+                <h2 class="sidebar-title">Admin Panel</h2>
+                <button class="sidebar-close" id="sidebarClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a asp-controller="Admin" asp-action="Index" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a asp-controller="Admin" asp-action="Rooms" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Rooms" ? "active" : "")">
+                    <i class="fas fa-bed"></i>
+                    <span>Rooms Management</span>
+                </a>
+                <a asp-controller="Admin" asp-action="RoomTypes" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "RoomTypes" ? "active" : "")">
+                    <i class="fas fa-door-open"></i>
+                    <span>Room Types</span>
+                </a>
+                <a asp-controller="Admin" asp-action="Bookings" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Bookings" ? "active" : "")">
+                    <i class="fas fa-calendar-check"></i>
+                    <span>Bookings Management</span>
+                </a>
+                
+                <div class="nav-divider"></div>
+                
+                <a asp-controller="Home" asp-action="Index" class="nav-item">
+                    <i class="fas fa-home"></i>
+                    <span>Back to Website</span>
+                </a>
+                <form method="post" asp-controller="Account" asp-action="Logout" class="nav-item-form">
+                    <button type="submit" class="nav-item logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-content">
+            <!-- Top Bar -->
+            <header class="admin-topbar">
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="topbar-info">
+                    <span class="topbar-title">@ViewData["Title"]</span>
+                </div>
+
+                <div class="topbar-user">
+                    <i class="fas fa-user-circle"></i>
+                    <span>@User.Identity?.Name</span>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="admin-main">
+                @RenderBody()
+            </main>
+
+            <!-- Footer -->
+            <footer class="admin-footer">
+                <p>&copy; @DateTime.Now.Year Bookify Hotel Reservation System. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    
+    <!-- Admin Panel JS -->
+    <script>
+        // Sidebar toggle functionality
+        $(document).ready(function() {
+            $('#sidebarToggle').click(function() {
+                $('.admin-sidebar').addClass('show');
+                $('.sidebar-backdrop').addClass('show');
+            });
+
+            $('#sidebarClose').click(function() {
+                $('.admin-sidebar').removeClass('show');
+                $('.sidebar-backdrop').removeClass('show');
+            });
+
+            // Close sidebar when clicking outside on mobile
+            $(document).click(function(event) {
+                if (!$(event.target).closest('.admin-sidebar, #sidebarToggle').length) {
+                    $('.admin-sidebar').removeClass('show');
+                }
+            });
+
+            // Toastr configuration
+            toastr.options = {
+                "closeButton": true,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "timeOut": "3000"
+            };
+        });
+    </script>
+    
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+
+</html>

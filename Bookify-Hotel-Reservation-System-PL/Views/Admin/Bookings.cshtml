@@ -1,0 +1,299 @@
+@model IEnumerable<Bookify_Hotel_Reservation_System__DAL.Models.Booking>
+
+@{
+    ViewData["Title"] = "Bookings Management";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="management-container">
+    <!-- Header with Filter Options -->
+    <div class="management-header">
+        <div>
+            <h2><i class="fas fa-calendar-check"></i> Bookings Management</h2>
+            <p class="text-muted">View and manage all hotel bookings</p>
+        </div>
+        <div class="management-actions">
+            <button class="btn btn-secondary" id="exportBtn">
+                <i class="fas fa-file-export"></i> Export
+            </button>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-card mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select class="form-select" id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Confirmed">Confirmed</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Date From</label>
+                <input type="date" class="form-control" id="filterDateFrom">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Date To</label>
+                <input type="date" class="form-control" id="filterDateTo">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">&nbsp;</label>
+                <button class="btn btn-primary w-100" id="applyFilters">
+                    <i class="fas fa-filter"></i> Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bookings Table -->
+    <div class="table-card">
+        <div class="table-responsive">
+            <table id="bookingsTable" class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer Name</th>
+                        <th>Room Number</th>
+                        <th>Check-In</th>
+                        <th>Check-Out</th>
+                        <th>Price</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td><strong>#@booking.Id</strong></td>
+                            <td>
+                                <div class="customer-info">
+                                    <i class="fas fa-user-circle"></i>
+                                    @(booking.User?.FullName ?? "N/A")
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge badge-room">
+                                    <i class="fas fa-bed"></i> @(booking.Room?.RoomNumber ?? "N/A")
+                                </span>
+                            </td>
+                            <td>@booking.CheckInDate.ToString("MMM dd, yyyy")</td>
+                            <td>@booking.CheckOutDate.ToString("MMM dd, yyyy")</td>
+                            <td><strong class="text-success">$@booking.Price.ToString("N2")</strong></td>
+                            <td>
+                                @switch (booking.Status.ToString())
+                                {
+                                    case "Pending":
+                                        <span class="badge badge-warning"><i class="fas fa-clock"></i> Pending</span>
+                                        break;
+                                    case "Confirmed":
+                                        <span class="badge badge-info"><i class="fas fa-check-circle"></i> Confirmed</span>
+                                        break;
+                                    case "Completed":
+                                        <span class="badge badge-success"><i class="fas fa-check-double"></i> Completed</span>
+                                        break;
+                                    case "Cancelled":
+                                        <span class="badge badge-danger"><i class="fas fa-times-circle"></i> Cancelled</span>
+                                        break;
+                                    default:
+                                        <span class="badge badge-secondary">@booking.Status</span>
+                                        break;
+                                }
+                            </td>
+                            <td>@booking.CreatedAt.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <button class="btn btn-sm btn-view" 
+                                            data-id="@booking.Id"
+                                            data-customer="@(booking.User?.FullName ?? "N/A")"
+                                            data-room="@(booking.Room?.RoomNumber ?? "N/A")"
+                                            data-checkin="@booking.CheckInDate.ToString("yyyy-MM-dd")"
+                                            data-checkout="@booking.CheckOutDate.ToString("yyyy-MM-dd")"
+                                            data-price="@booking.Price"
+                                            data-status="@booking.Status"
+                                            title="View Details">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                    @if (booking.Status.ToString() != "Cancelled" && booking.Status.ToString() != "Completed")
+                                    {
+                                        <button class="btn btn-sm btn-cancel" data-id="@booking.Id" title="Cancel Booking">
+                                            <i class="fas fa-ban"></i>
+                                        </button>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- View Booking Details Modal -->
+<div class="modal fade" id="viewBookingModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="fas fa-info-circle"></i> Booking Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="booking-details">
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-hashtag"></i> Booking ID</label>
+                                <p id="viewBookingId"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-user"></i> Customer Name</label>
+                                <p id="viewCustomerName"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-bed"></i> Room Number</label>
+                                <p id="viewRoomNumber"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-dollar-sign"></i> Total Price</label>
+                                <p id="viewPrice"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-calendar-alt"></i> Check-In Date</label>
+                                <p id="viewCheckIn"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-calendar-alt"></i> Check-Out Date</label>
+                                <p id="viewCheckOut"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-info-circle"></i> Status</label>
+                                <p id="viewStatus"></p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="detail-item">
+                                <label><i class="fas fa-moon"></i> Nights</label>
+                                <p id="viewNights"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Initialize DataTable
+            const bookingsTable = $('#bookingsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [[0, 'desc']],
+                language: {
+                    search: "Search Bookings:",
+                    lengthMenu: "Show _MENU_ bookings per page"
+                }
+            });
+
+            // Apply Filters
+            $('#applyFilters').on('click', function() {
+                const status = $('#filterStatus').val();
+                const dateFrom = $('#filterDateFrom').val();
+                const dateTo = $('#filterDateTo').val();
+
+                // PLACEHOLDER: Implement actual filtering with backend API
+                let filteredData = bookingsTable.rows().data();
+                
+                // For demo, just search by status
+                if (status) {
+                    bookingsTable.column(6).search(status).draw();
+                } else {
+                    bookingsTable.search('').columns().search('').draw();
+                }
+
+                toastr.info('Filters applied');
+            });
+
+            // View Booking Details
+            $('#bookingsTable').on('click', '.btn-view', function() {
+                const btn = $(this);
+                const checkInDate = new Date(btn.data('checkin'));
+                const checkOutDate = new Date(btn.data('checkout'));
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+
+                $('#viewBookingId').text('#' + btn.data('id'));
+                $('#viewCustomerName').text(btn.data('customer'));
+                $('#viewRoomNumber').text(btn.data('room'));
+                $('#viewPrice').text('$' + parseFloat(btn.data('price')).toFixed(2));
+                $('#viewCheckIn').text(new Date(btn.data('checkin')).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+                $('#viewCheckOut').text(new Date(btn.data('checkout')).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }));
+                $('#viewStatus').html('<span class="badge badge-info">' + btn.data('status') + '</span>');
+                $('#viewNights').text(nights + ' night' + (nights > 1 ? 's' : ''));
+
+                $('#viewBookingModal').modal('show');
+            });
+
+            // Cancel Booking
+            $('#bookingsTable').on('click', '.btn-cancel', function() {
+                const bookingId = $(this).data('id');
+                const row = $(this).closest('tr');
+
+                if (confirm('Are you sure you want to cancel this booking?')) {
+                    // PLACEHOLDER: Replace with actual AJAX call to backend
+                    $.ajax({
+                        url: '@Url.Action("CancelBooking", "Admin")',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(bookingId),
+                        success: function(response) {
+                            if (response.success) {
+                                toastr.success(response.message);
+                                // Update the status in the table
+                                const cellData = bookingsTable.cell(row, 6).data();
+                                bookingsTable.cell(row, 6).data('<span class="badge badge-danger"><i class="fas fa-times-circle"></i> Cancelled</span>').draw();
+                                
+                                // Remove cancel button
+                                const actionCell = bookingsTable.cell(row, 8).node();
+                                $(actionCell).find('.btn-cancel').remove();
+                            } else {
+                                toastr.error(response.message);
+                            }
+                        },
+                        error: function() {
+                            toastr.error('Error cancelling booking');
+                        }
+                    });
+                }
+            });
+
+            // Export Button
+            $('#exportBtn').on('click', function() {
+                // PLACEHOLDER: Implement export functionality (CSV, PDF, Excel)
+                toastr.info('Export functionality will be implemented with backend');
+            });
+        });
+    </script>
+}
