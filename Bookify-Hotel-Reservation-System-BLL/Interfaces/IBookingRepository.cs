@@ -8,19 +8,8 @@ using System.Threading.Tasks;
 
 namespace Bookify_Hotel_Reservation_System_BLL.Interfaces
 {
-    public interface IBookingRepository
+    public interface IBookingRepository : IGenericRepository<Booking>
     {
-        IEnumerable<Booking> GetAll();
         IEnumerable<Booking> GetAllWithRoomsAndUser();
-        
-        void Add(Booking booking);
-
-        Booking? Get(int id);
-
-        Booking Update(Booking booking);
-
-        bool Delete(int id);
-
-        public void Save();
     }
 }

@@ -43,7 +43,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             }
 
             var user = await userManager.FindByEmailAsync(model.Email);
-            
+
             if (user == null)
             {
                 ModelState.AddModelError(string.Empty, "Invalid email or password");

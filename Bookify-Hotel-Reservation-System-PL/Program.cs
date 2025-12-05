@@ -49,12 +49,8 @@ builder.Services.AddDbContext<BookifyDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
 });
 
-// Add Repositories
-builder.Services.AddScoped<IRoomRepository, RoomRepository>();
-builder.Services.AddScoped<IBookingRepository, BookingRepository>();
-builder.Services.AddScoped<IAmenityRepository, AmenityRepository>();
-builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+// Add Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 var app = builder.Build();
 
@@ -122,6 +118,8 @@ app.MapControllerRoute(
     .WithStaticAssets();
 
 app.Run();
+
+
 
 // Seed Roles and Admin User
 static async Task SeedRolesAndAdminAsync(RoleManager<ApplicationRole> roleManager, UserManager<ApplicationUser> userManager)

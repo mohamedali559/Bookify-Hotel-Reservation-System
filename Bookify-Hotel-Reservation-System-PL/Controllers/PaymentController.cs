@@ -3,22 +3,17 @@ using Bookify_Hotel_Reservation_System_BLL.Interfaces;
 using Bookify_Hotel_Reservation_System_PL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Bookify_Hotel_Reservation_System_PL.Controllers
 {
     [Authorize]
     public class PaymentController : Controller
     {
-        private readonly IPaymentRepository _paymentRepository;
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public PaymentController(
-            IPaymentRepository paymentRepository,
-            IBookingRepository bookingRepository)
+        public PaymentController(IUnitOfWork unitOfWork)
         {
-            _paymentRepository = paymentRepository;
-            _bookingRepository = bookingRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
@@ -37,30 +32,25 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     return Json(new { success = false, message = "Invalid payment data: " + string.Join(", ", errors) });
                 }
 
-                // Get the booking
-                var booking = _bookingRepository.Get(model.BookingId);
+                var booking = _unitOfWork.Bookings.Get(model.BookingId);
                 if (booking == null)
                 {
                     return Json(new { success = false, message = "Booking not found" });
                 }
 
-                // Check if payment already exists for this booking
-                var existingPayment = _paymentRepository.GetByBookingId(model.BookingId);
+                var existingPayment = _unitOfWork.Payments.GetByBookingId(model.BookingId);
                 if (existingPayment != null)
                 {
                     return Json(new { success = false, message = "Payment already processed for this booking" });
                 }
 
-                // Validate amount matches booking price
                 if (model.Amount != booking.Price)
                 {
                     return Json(new { success = false, message = $"Payment amount (${model.Amount}) does not match booking price (${booking.Price})" });
                 }
 
-                // Generate transaction ID
                 var transactionId = $"TXN-{DateTime.Now:yyyyMMddHHmmss}-{booking.Id}";
 
-                // Create payment record
                 var payment = new Payment
                 {
                     Amount = model.Amount,
@@ -71,14 +61,12 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     Booking = booking
                 };
 
-                // Save payment
-                _paymentRepository.Add(payment);
-                _paymentRepository.Save();
-
-                // Update booking status to Confirmed
+                _unitOfWork.Payments.Add(payment);
+                
                 booking.Status = BookingStatus.Confirmed;
-                _bookingRepository.Update(booking);
-                _bookingRepository.Save();
+                _unitOfWork.Bookings.Update(booking);
+                
+                _unitOfWork.Complete();
 
                 return Json(new
                 {
@@ -112,7 +100,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         {
             try
             {
-                var booking = _bookingRepository.GetAllWithRoomsAndUser()
+                var booking = _unitOfWork.Bookings.GetAllWithRoomsAndUser()
                     .FirstOrDefault(b => b.Id == bookingId);
 
                 if (booking == null)
@@ -150,7 +138,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         [HttpGet]
         public IActionResult Success(int paymentId)
         {
-            var payment = _paymentRepository.Get(paymentId);
+            var payment = _unitOfWork.Payments.Get(paymentId);
             if (payment == null)
             {
                 return RedirectToAction("Index", "Home");

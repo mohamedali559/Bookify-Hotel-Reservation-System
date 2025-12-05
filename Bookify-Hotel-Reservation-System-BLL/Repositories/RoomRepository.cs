@@ -1,69 +1,40 @@
-﻿namespace Bookify_Hotel_Reservation_System_BLL.Repositories
+﻿using Bookify_Hotel_Reservation_System__DAL.Contexts;
+using Bookify_Hotel_Reservation_System__DAL.Models;
+using Bookify_Hotel_Reservation_System_BLL.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
+namespace Bookify_Hotel_Reservation_System_BLL.Repositories;
+
+public class RoomRepository : GenericRepository<Room>, IRoomRepository
 {
-    public class RoomRepository : IRoomRepository
+    public RoomRepository(BookifyDbContext context) : base(context)
     {
-        private readonly BookifyDbContext _Context;
-        public RoomRepository(BookifyDbContext context)
-        {
-            _Context = context;
-        }
+    }
 
-        public void Add(Room room)
-        {
-            _Context.Rooms.Add(room);
-        }
+    public IEnumerable<Room> GetAllWithAmenitiesAndRoomType()
+    {
+        return _context.Rooms
+            .Include(r => r.RoomType)
+            .Include(r => r.RoomAmenities)
+            .ThenInclude(ra => ra.Amenity)
+            .ToList();
+    }
 
-        public bool Delete(int id)
-        {
-            Room FoundedRoom = Get(id);
-            if (FoundedRoom == null)
-                return false;
+    public Room? GetByIdWithAmenitiesAndRoomType(int id)
+    {
+        return _context.Rooms
+            .Include(r => r.RoomType)
+            .Include(r => r.RoomAmenities)
+            .ThenInclude(ra => ra.Amenity)
+            .FirstOrDefault(r => r.Id == id);
+    }
 
-            _Context.Rooms.Remove(FoundedRoom);
-            return true;
-        }
-
-        public Room? Get(int id)
-        {
-            return _Context.Rooms.FirstOrDefault(r => r.Id == id);
-        }
-
-        public IEnumerable<Room> GetAll()
-        {
-            return _Context.Rooms.ToList();
-        }
-
-        public Room Update(Room room)
-        {
-            _Context.Rooms.Update(room);
-            return room;
-        }
-        
-        public IEnumerable<Room> GetAllWithAmenitiesAndRoomType()
-        {
-            return _Context.Rooms.Include(r => r.RoomType)
-                            .Include(r => r.RoomAmenities)
-                            .ThenInclude(ra => ra.Amenity);
-        }
-
-        public Room? GetByIdWithAmenitiesAndRoomType(int id)
-        {
-            return _Context.Rooms
-                .Include(r => r.RoomType)
-                .Include(r => r.RoomAmenities)
-                .ThenInclude(ra => ra.Amenity)
-                .FirstOrDefault(r => r.Id == id);
-        }
-
-        public Room GetAllWithAmenitiesAndRoomTypeById(int id)
-        {
-            return _Context.Rooms.Include(r => r.RoomType)
-                            .Include(r => r.RoomAmenities)
-                            .ThenInclude(ra => ra.Amenity).FirstOrDefault(r => r.Id == id);
-        }
-        public void Save()
-        {
-            _Context.SaveChanges();
-        }
+    public Room GetAllWithAmenitiesAndRoomTypeById(int id)
+    {
+        return _context.Rooms
+            .Include(r => r.RoomType)
+            .Include(r => r.RoomAmenities)
+            .ThenInclude(ra => ra.Amenity)
+            .FirstOrDefault(r => r.Id == id);
     }
 }

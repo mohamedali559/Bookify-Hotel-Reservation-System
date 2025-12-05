@@ -11,17 +11,14 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
 {
     public class BookController : Controller
     {
-        private readonly IBookingRepository _bookingRepository;
-        private readonly IRoomRepository _roomRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public BookController(
-            IBookingRepository bookingRepository,
-            IRoomRepository roomRepository,
+            IUnitOfWork unitOfWork,
             UserManager<ApplicationUser> userManager)
         {
-            _bookingRepository = bookingRepository;
-            _roomRepository = roomRepository;
+            _unitOfWork = unitOfWork;
             _userManager = userManager;
         }
 
@@ -41,7 +38,6 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     return Json(new { success = false, message = "Invalid booking data: " + string.Join(", ", errors) });
                 }
 
-                // Validate dates
                 if (model.CheckInDate < DateTime.Today)
                 {
                     return Json(new { success = false, message = "Check-in date cannot be in the past" });
@@ -52,13 +48,10 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     return Json(new { success = false, message = "Check-out date must be after check-in date" });
                 }
 
-                // Get current user (if logged in)
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 
-                // For testing: use a default user if not logged in
                 if (string.IsNullOrEmpty(userId))
                 {
-                    // Try to get any user from database for testing
                     var defaultUser = await _userManager.Users.FirstOrDefaultAsync();
                     if (defaultUser != null)
                     {
@@ -70,8 +63,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     }
                 }
 
-                // Verify room exists and get room with RoomType
-                var room = _roomRepository.GetByIdWithAmenitiesAndRoomType(model.RoomId);
+                var room = _unitOfWork.Rooms.GetByIdWithAmenitiesAndRoomType(model.RoomId);
                 if (room == null)
                 {
                     return Json(new { success = false, message = "Room not found" });
@@ -82,8 +74,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     return Json(new { success = false, message = "Room type information not available" });
                 }
 
-                // Check if room is available for the selected dates
-                var existingBookings = _bookingRepository.GetAll()
+                var existingBookings = _unitOfWork.Bookings.GetAll()
                     .Where(b => b.RoomId == model.RoomId &&
                                b.Status != BookingStatus.Cancelled &&
                                ((b.CheckInDate <= model.CheckInDate && b.CheckOutDate > model.CheckInDate) ||
@@ -96,11 +87,9 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     return Json(new { success = false, message = "Room is not available for the selected dates" });
                 }
 
-                // Calculate nights and total price from RoomType.BasePrice
                 var nights = (model.CheckOutDate - model.CheckInDate).Days;
                 var totalPrice = nights * room.RoomType.BasePrice;
 
-                // Create booking
                 var booking = new Booking
                 {
                     RoomId = model.RoomId,
@@ -112,8 +101,8 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                     CreatedAt = DateTime.Now
                 };
 
-                _bookingRepository.Add(booking);
-                _bookingRepository.Save();
+                _unitOfWork.Bookings.Add(booking);
+                _unitOfWork.Complete();
 
                 return Json(new
                 {
@@ -152,7 +141,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            var bookings = _bookingRepository.GetAllWithRoomsAndUser()
+            var bookings = _unitOfWork.Bookings.GetAllWithRoomsAndUser()
                 .Where(b => b.UserId == userId)
                 .OrderByDescending(b => b.CreatedAt)
                 .ToList();
@@ -165,7 +154,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         public IActionResult CancelBooking(int id)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var booking = _bookingRepository.Get(id);
+            var booking = _unitOfWork.Bookings.Get(id);
 
             if (booking == null)
             {
@@ -183,8 +172,8 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             }
 
             booking.Status = BookingStatus.Cancelled;
-            _bookingRepository.Update(booking);
-            _bookingRepository.Save();
+            _unitOfWork.Bookings.Update(booking);
+            _unitOfWork.Complete();
 
             return Json(new { success = true, message = "Booking cancelled successfully" });
         }

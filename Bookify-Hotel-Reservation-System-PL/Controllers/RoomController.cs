@@ -6,16 +6,16 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
 {
     public class RoomController : Controller
     {
-        private readonly IRoomRepository _roomRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public RoomController(IRoomRepository roomRepository)
+        public RoomController(IUnitOfWork unitOfWork)
         {
-            _roomRepository = roomRepository;
+            _unitOfWork = unitOfWork;
         }
 
         public IActionResult Index(string? searchText, string? roomType, string? guests, string? price)
         {
-            var rooms = _roomRepository.GetAllWithAmenitiesAndRoomType();
+            var rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType();
 
             ViewBag.RoomTypeName = rooms
                     .Where(r => r.RoomType != null)
@@ -90,7 +90,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
 
         public IActionResult Details(int id)
         {
-            var room = _roomRepository.GetByIdWithAmenitiesAndRoomType(id);
+            var room = _unitOfWork.Rooms.GetByIdWithAmenitiesAndRoomType(id);
 
             if (room == null)
                 return NotFound();
@@ -113,7 +113,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
 
         private List<RoomDetailsViewModel> GetRoomViewModels()
         {
-            var rooms = _roomRepository.GetAllWithAmenitiesAndRoomType();
+            var rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType();
 
             return rooms.Select(item => new RoomDetailsViewModel
             {

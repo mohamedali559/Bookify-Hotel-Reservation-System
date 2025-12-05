@@ -7,20 +7,7 @@ using System.Threading.Tasks;
 
 namespace Bookify_Hotel_Reservation_System_BLL.Interfaces
 {
-    public interface IAmenityRepository
+    public interface IAmenityRepository : IGenericRepository<Amenity>
     {
-        IEnumerable<Amenity> GetAll();
-        //IEnumerable<Amenity> GetAllWithRoomsAndUser();
-
-        void Add(Amenity amenity);
-
-        Amenity? Get(int id);
-
-        Amenity Update(Amenity amenity);
-
-        bool Delete(int id);
-
-        public void Save();
-        
     }
 }
