@@ -377,3 +377,167 @@ body {
         font-size: 16px;
     }
 }
+
+/* ===========================
+   User Dropdown Styles
+   =========================== */
+
+/* User Dropdown Container */
+.user-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+/* Dropdown Toggle Button */
+.user-dropdown-toggle {
+    background: linear-gradient(135deg, #08306C 0%, #064273 100%);
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(8, 48, 108, 0.2);
+}
+
+.user-dropdown-toggle:hover {
+    background: linear-gradient(135deg, #064273 0%, #08306C 100%);
+    box-shadow: 0 4px 12px rgba(8, 48, 108, 0.3);
+    transform: translateY(-1px);
+}
+
+.user-dropdown-toggle i.fa-user-circle {
+    font-size: 18px;
+}
+
+.user-dropdown-toggle i.fa-chevron-down {
+    font-size: 10px;
+    transition: transform 0.3s ease;
+}
+
+.user-dropdown.show .user-dropdown-toggle i.fa-chevron-down {
+    transform: rotate(180deg);
+}
+
+/* Dropdown Menu */
+.user-dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: calc(100% + 12px);
+    background: #ffffff;
+    min-width: 220px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: 12px;
+    z-index: 1000;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.user-dropdown-menu.show {
+    display: block;
+}
+
+/* Dropdown Menu Items */
+.user-dropdown-menu a,
+.user-dropdown-menu button {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 14px 20px;
+    text-decoration: none;
+    color: #333333;
+    border: none;
+    background: none;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+    font-weight: 400;
+    gap: 12px;
+}
+
+.user-dropdown-menu a:hover,
+.user-dropdown-menu button:hover {
+    background: linear-gradient(90deg, rgba(8, 48, 108, 0.08) 0%, rgba(59, 130, 246, 0.08) 100%);
+    color: #08306C;
+    padding-left: 24px;
+}
+
+.user-dropdown-menu a i,
+.user-dropdown-menu button i {
+    width: 20px;
+    text-align: center;
+    font-size: 15px;
+    color: #08306C;
+}
+
+/* Dropdown Divider */
+.dropdown-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, #e0e0e0 50%, transparent 100%);
+    margin: 8px 12px;
+}
+
+/* Logout Button Special Styling */
+.user-dropdown-menu form button {
+    color: #dc2626;
+}
+
+.user-dropdown-menu form button:hover {
+    background: rgba(220, 38, 38, 0.08);
+    color: #b91c1c;
+}
+
+.user-dropdown-menu form button i {
+    color: #dc2626;
+}
+
+.user-dropdown-menu form button:hover i {
+    color: #b91c1c;
+}
+
+/* Arrow Indicator */
+.user-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 20px;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-left: 1px solid rgba(0, 0, 0, 0.05);
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    transform: rotate(45deg);
+}
+
+/* Mobile Responsive - User Dropdown */
+@media screen and (max-width: 768px) {
+    .user-dropdown-menu {
+        min-width: 200px;
+        right: -10px;
+    }
+
+    .user-dropdown-toggle {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+}

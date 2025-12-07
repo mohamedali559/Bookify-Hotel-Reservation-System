@@ -32,7 +32,6 @@ document.addEventListener("DOMContentLoaded", () => {
    * - Remember me functionality UI
    * - Loading states during form submission
    */
-  console.log("Login page loaded - Authentication handled by server");
 });
 
 /**
