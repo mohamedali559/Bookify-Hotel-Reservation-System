@@ -321,7 +321,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const priceRangeSlider = document.getElementById('price-range');
         const maxPrice = priceRangeSlider ? parseFloat(priceRangeSlider.value) : Infinity;
 
-        // Start with all rooms
+        // Start with all rooms -  Shallow Copy -> using Spread Operator
         let filteredRooms = [...allRoomCards];
 
         // Apply search text filter (matches room name or description)

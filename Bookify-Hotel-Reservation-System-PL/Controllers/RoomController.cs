@@ -26,7 +26,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         /// Displays the main rooms listing page with all available rooms
         /// </summary>
         /// <returns>View with list of room details</returns>
-        public IActionResult Index()
+        public IActionResult Index(string? searchText, string? roomType, string? guests, string? price)
         {
             // Fetch all rooms with their related data (amenities and room type information)
             var rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType();
