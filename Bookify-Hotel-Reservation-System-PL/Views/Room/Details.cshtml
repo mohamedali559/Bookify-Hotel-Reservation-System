@@ -4,258 +4,58 @@
     ViewData["Title"] = Model.RoomTypeName;
 }
 
+@* Include external CSS stylesheets for room details page *@
 @section Styles {
     <link rel="stylesheet" href="~/css/RoomsStyle.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-    <style>
-        .room-details-container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .room-details-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .room-details-header h1 {
-            color: #0b3a66;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .room-details-header .divider {
-            width: 100px;
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #2563eb);
-            margin: 0 auto 20px;
-        }
-
-        .room-details-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-bottom: 30px;
-        }
-
-        .room-image {
-            width: 100%;
-            height: 400px;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-
-        .room-info-section {
-            padding: 20px;
-        }
-
-        .room-info-section h2 {
-            color: #0b3a66;
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .room-info-section p {
-            color: #666;
-            line-height: 1.8;
-            margin-bottom: 20px;
-        }
-
-        .room-specs {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        .spec-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: #f8f8f8;
-            border-radius: 5px;
-        }
-
-        .spec-item i {
-            color: #3b82f6;
-            font-size: 1.5rem;
-            margin-right: 10px;
-        }
-
-        .spec-item span {
-            color: #0b3a66;
-            font-weight: 500;
-        }
-
-        .price-section {
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .price-section .price-label {
-            font-size: 1rem;
-            margin-bottom: 5px;
-        }
-
-        .price-section .price-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
-
-        .amenities-section {
-            margin-top: 30px;
-            padding: 20px;
-            background: #f8f8f8;
-            border-radius: 10px;
-        }
-
-        .amenities-section h3 {
-            color: #0b3a66;
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-        }
-
-        .amenities-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-        }
-
-        .amenity-item {
-            display: flex;
-            align-items: center;
-            padding: 15px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .amenity-item i {
-            color: #3b82f6;
-            font-size: 1.3rem;
-            margin-right: 12px;
-        }
-
-        .amenity-item .amenity-name {
-            font-weight: 600;
-            color: #0b3a66;
-            margin-bottom: 5px;
-        }
-
-        .amenity-item .amenity-desc {
-            font-size: 0.9rem;
-            color: #666;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
-
-        .btn-primary {
-            flex: 1;
-            padding: 15px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-secondary {
-            flex: 1;
-            padding: 15px;
-            background: #fff;
-            color: #0b3a66;
-            border: 2px solid #3b82f6;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn-secondary:hover {
-            background: #f0f7ff;
-            border-color: #2563eb;
-        }
-
-        /* Toast success color override */
-        #toast.success {
-            background: rgba(76, 175, 80, 0.95);
-            color: white;
-        }
-
-        #toast.warning {
-            background: rgba(255, 152, 0, 0.95);
-            color: white;
-        }
-
-        @@media (max-width: 768px) {
-            .room-details-content {
-                grid-template-columns: 1fr;
-            }
-
-            .room-specs {
-                grid-template-columns: 1fr;
-            }
-
-            .action-buttons {
-                flex-direction: column;
-            }
-        }
-    </style>
 }
 
-<!-- Cart & Toast -->
+@* ===========================
+   CART & TOAST UI COMPONENTS
+   =========================== *@
+
+@* Shopping cart icon with item count badge *@
 <div class="cart" id="main-cart">
     <i class="fas fa-shopping-cart"></i> <span id="cart-count">0</span>
 </div>
+
+@* Cart popup showing selected rooms *@
 <div id="cart-popup">
     <h3>Your Selected Rooms</h3>
     <div id="cart-items"></div>
     <button id="go-reservation" class="cart-button">Go to Reservation</button>
 </div>
+
+@* Toast notification element for user feedback *@
 <div id="toast"></div>
 
+@* ===========================
+   MAIN ROOM DETAILS CONTAINER
+   =========================== *@
 <div class="room-details-container">
+    
+    @* Page header with room type name and decorative divider *@
     <div class="room-details-header">
         <h1>@Model.RoomTypeName</h1>
         <div class="divider"></div>
         <p>Experience luxury and comfort in our premium accommodations</p>
     </div>
 
+    @* Two-column layout: Image on left, Room info on right *@
     <div class="room-details-content">
+        
+        @* Left column: Room image *@
         <div class="room-image-section">
             <img src="@Model.ImageUrl" alt="@Model.RoomTypeName" class="room-image">
         </div>
 
+        @* Right column: Room information and specifications *@
         <div class="room-info-section">
             <h2>Room Features</h2>
             <p>@Model.RoomDescription</p>
 
+            @* Grid displaying room specifications (guests, area, floor, room number) *@
             <div class="room-specs">
                 <div class="spec-item">
                     <i class="fas fa-user-friends"></i>
@@ -275,33 +75,41 @@
                 </div>
             </div>
 
+            @* Price display with gradient background *@
             <div class="price-section">
                 <div class="price-label">Starting from</div>
                 <div class="price-value">$@Model.BasePrice</div>
                 <div class="price-label">per night</div>
             </div>
 
-            <div style="background: #f0f7ff; padding: 15px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #3b82f6;">
-                <h4 style="margin-bottom: 10px; color: #0b3a66;"><i class="fas fa-info-circle"></i> Booking Information</h4>
-                <p style="margin: 5px 0; color: #666;"><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Free cancellation within 24 hours</p>
-                <p style="margin: 5px 0; color: #666;"><i class="fas fa-coffee" style="color: #3b82f6;"></i> Complimentary breakfast included</p>
-                <p style="margin: 5px 0; color: #666;"><i class="fas fa-wifi" style="color: #2196F3;"></i> Free high-speed Wi-Fi</p>
-                <p style="margin: 5px 0; color: #666;"><i class="fas fa-clock" style="color: #FF9800;"></i> Check-in: 2 PM | Check-out: 11 AM</p>
+            @* Booking information panel with hotel policies *@
+            <div class="booking-info-panel">
+                <h4><i class="fas fa-info-circle"></i> Booking Information</h4>
+                <p><i class="fas fa-check-circle"></i> Free cancellation within 24 hours</p>
+                <p><i class="fas fa-coffee"></i> Complimentary breakfast included</p>
+                <p><i class="fas fa-wifi"></i> Free high-speed Wi-Fi</p>
+                <p><i class="fas fa-clock"></i> Check-in: 2 PM | Check-out: 11 AM</p>
             </div>
         </div>
     </div>
 
+    @* ===========================
+       AMENITIES SECTION
+       Display all amenities if available
+       =========================== *@
     @if (Model.Amenities != null && Model.Amenities.Any())
     {
         <div class="amenities-section">
             <h3><i class="fas fa-star"></i> Room Amenities</h3>
             <div class="amenities-grid">
+                @* Loop through each amenity and display as a card *@
                 @foreach (var amenity in Model.Amenities)
                 {
                     <div class="amenity-item">
                         <i class="fas fa-check-circle"></i>
                         <div>
                             <div class="amenity-name">@amenity.Name</div>
+                            @* Show description only if it exists *@
                             @if (!string.IsNullOrWhiteSpace(amenity.Description))
                             {
                                 <div class="amenity-desc">@amenity.Description</div>
@@ -313,128 +121,41 @@
         </div>
     }
 
+    @* ===========================
+       ACTION BUTTONS
+       Add to cart and back to rooms list
+       =========================== *@
     <div class="action-buttons">
+        @* Primary action: Add room to cart *@
         <button class="btn-primary" onclick="addToCart()">
             <i class="fas fa-shopping-cart"></i> Add to Cart
         </button>
+        @* Secondary action: Navigate back to rooms listing *@
         <a href="/Room/Index" class="btn-secondary">
             <i class="fas fa-arrow-left"></i> Back to Rooms
         </a>
     </div>
 </div>
 
+@* ===========================
+   JAVASCRIPT SECTION
+   Pass room data to external JS file
+   =========================== *@
 @section Scripts {
     <script>
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = ''; // Clear previous classes
-            toast.classList.add(type);
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-
-        function addToCart() {
-            const roomData = {
-                roomId: @Model.RoomId,
-                roomTypeName: '@Model.RoomTypeName',
-                roomDescription: '@Model.RoomDescription',
-                imageUrl: '@Model.ImageUrl',
-                basePrice: @Model.BasePrice,
-                guests: @Model.Guests,
-                area: @Model.Area,
-                floor: @Model.Floor
-            };
-
-            let cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
-            
-            const existingIndex = cart.findIndex(item => item.roomId === roomData.roomId);
-            
-            if (existingIndex === -1) {
-                cart.push(roomData);
-                localStorage.setItem('reservationRooms', JSON.stringify(cart));
-                
-                updateCartDisplay();
-                
-                showToast('✓ Room added to cart successfully!', 'success');
-            } else {
-                showToast('⚠ This room is already in your cart', 'warning');
-            }
-        }
-
-        function updateCartDisplay() {
-            const cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
-            const cartCountElement = document.getElementById('cart-count');
-            const mainCart = document.getElementById('main-cart');
-            const cartItemsContainer = document.getElementById('cart-items');
-
-            if (cart.length > 0) {
-                cartCountElement.textContent = cart.length;
-                mainCart.style.display = 'flex';
-
-                // Update cart popup content
-                cartItemsContainer.innerHTML = '';
-                cart.forEach((room, index) => {
-                    const roomDiv = document.createElement('div');
-                    roomDiv.className = 'cart-item';
-                    roomDiv.innerHTML = `
-                        <strong>${room.roomTypeName}</strong>
-                        <p>$${room.basePrice}/night - ${room.guests} Guests - ${room.area}m²</p>
-                        <button class="cart-remove" onclick="removeFromCart(${index})">Remove</button>
-                    `;
-                    cartItemsContainer.appendChild(roomDiv);
-                });
-            } else {
-                mainCart.style.display = 'none';
-                cartItemsContainer.innerHTML = '<p style="color: #666; text-align: center; padding: 20px;">Your cart is empty</p>';
-            }
-        }
-
-        function removeFromCart(index) {
-            let cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
-            cart.splice(index, 1);
-            localStorage.setItem('reservationRooms', JSON.stringify(cart));
-            updateCartDisplay();
-            showToast('✓ Room removed from cart', 'success');
-        }
-
-        // Toggle cart popup
-        document.addEventListener('DOMContentLoaded', function() {
-            updateCartDisplay();
-
-            const mainCart = document.getElementById('main-cart');
-            const cartPopup = document.getElementById('cart-popup');
-
-            // Open/close cart popup
-            mainCart.addEventListener('click', function() {
-                if (cartPopup.style.display === 'block') {
-                    cartPopup.style.display = 'none';
-                } else {
-                    cartPopup.style.display = 'block';
-                }
-            });
-
-            // Close cart popup when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!mainCart.contains(e.target) && !cartPopup.contains(e.target)) {
-                    cartPopup.style.display = 'none';
-                }
-            });
-
-            // Go to reservation button
-            const goReservationBtn = document.getElementById('go-reservation');
-            if (goReservationBtn) {
-                goReservationBtn.addEventListener('click', function() {
-                    const cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
-                    if (cart.length > 0) {
-                        window.location.href = '/Reservation/Index';
-                    } else {
-                        showToast('⚠ Your cart is empty', 'warning');
-                    }
-                });
-            }
-        });
+        // Create global room data object for use in external JavaScript file
+        // This bridges Razor model data to client-side JavaScript
+        window.currentRoomData = {
+            roomId: @Model.RoomId,
+            roomTypeName: '@Html.Raw(Model.RoomTypeName.Replace("'", "\\'"))', // Escape single quotes
+            roomDescription: '@Html.Raw(Model.RoomDescription.Replace("'", "\\'"))', // Escape single quotes
+            imageUrl: '@Model.ImageUrl',
+            basePrice: @Model.BasePrice,
+            guests: @Model.Guests,
+            area: @Model.Area,
+            floor: @Model.Floor
+        };
     </script>
+    @* Load external JavaScript file for cart and toast functionality *@
+    <script src="~/js/room-details.js"></script>
 }

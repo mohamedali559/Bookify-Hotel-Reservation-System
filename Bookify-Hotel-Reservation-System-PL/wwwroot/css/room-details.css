@@ -1,0 +1,242 @@
+/* ===========================
+   Room Details Page Styles
+   =========================== */
+
+.room-details-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.room-details-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.room-details-header h1 {
+    color: #2e2b29;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.room-details-header .divider {
+    width: 100px;
+    height: 3px;
+    background: #cbb58f;
+    margin: 0 auto 20px;
+}
+
+.room-details-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.room-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.room-info-section {
+    padding: 20px;
+}
+
+.room-info-section h2 {
+    color: #2e2b29;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.room-info-section p {
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.room-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f8f8f8;
+    border-radius: 5px;
+}
+
+.spec-item i {
+    color: #cbb58f;
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.spec-item span {
+    color: #2e2b29;
+    font-weight: 500;
+}
+
+.price-section {
+    background: #cbb58f;
+    color: #2e2b29;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.price-section .price-label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.price-section .price-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.booking-info-panel {
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.booking-info-panel h4 {
+    margin-bottom: 10px;
+    color: #2e2b29;
+}
+
+.booking-info-panel p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.booking-info-panel i.fa-check-circle {
+    color: #4CAF50;
+}
+
+.booking-info-panel i.fa-coffee {
+    color: #cbb58f;
+}
+
+.booking-info-panel i.fa-wifi {
+    color: #2196F3;
+}
+
+.booking-info-panel i.fa-clock {
+    color: #FF9800;
+}
+
+.amenities-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 10px;
+}
+
+.amenities-section h3 {
+    color: #2e2b29;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.amenity-item i {
+    color: #cbb58f;
+    font-size: 1.3rem;
+    margin-right: 12px;
+}
+
+.amenity-item .amenity-name {
+    font-weight: 600;
+    color: #2e2b29;
+    margin-bottom: 5px;
+}
+
+.amenity-item .amenity-desc {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.action-buttons .btn-primary {
+    flex: 1;
+    padding: 15px;
+    background: #cbb58f;
+    color: #2e2b29;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.action-buttons .btn-primary:hover {
+    background: #d7c29b;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.action-buttons .btn-secondary {
+    flex: 1;
+    padding: 15px;
+    background: #fff;
+    color: #2e2b29;
+    border: 2px solid #cbb58f;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.action-buttons .btn-secondary:hover {
+    background: #f8f8f8;
+}
+
+@media (max-width: 768px) {
+    .room-details-content {
+        grid-template-columns: 1fr;
+    }
+
+    .room-specs {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}

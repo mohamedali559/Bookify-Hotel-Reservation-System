@@ -147,6 +147,17 @@
     text-align: center;
 }
 
+/* Toast success/warning variants */
+#toast.success {
+    background: rgba(76, 175, 80, 0.95);
+    color: white;
+}
+
+#toast.warning {
+    background: rgba(255, 152, 0, 0.95);
+    color: white;
+}
+
 /* Section header & filters */
 .section-header {
     max-width: 1280px;
@@ -251,32 +262,6 @@
     font-size: 1.1rem;
     padding: 40px 20px;
     grid-column: 1 / -1;
-}
-
-@media(max-width:1200px) {
-    #rooms-container {
-        grid-template-columns: repeat(3,1fr);
-    }
-}
-
-@media(max-width:900px) {
-    #rooms-container {
-        grid-template-columns: repeat(2,1fr);
-    }
-}
-
-@media(max-width:600px) {
-    #rooms-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .section-header {
-        margin: 20px auto;
-    }
-    
-    .filters-container {
-        grid-template-columns: 1fr;
-    }
 }
 
 .room-card {
@@ -490,4 +475,283 @@
     border: none;
     font-size: 25px;
     cursor: pointer;
+}
+
+/* ===========================
+   ROOM DETAILS PAGE STYLES
+   =========================== */
+
+.room-details-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.room-details-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.room-details-header h1 {
+    color: #0b3a66;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.room-details-header .divider {
+    width: 100px;
+    height: 3px;
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+    margin: 0 auto 20px;
+}
+
+.room-details-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+.room-image {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.room-info-section {
+    padding: 20px;
+}
+
+.room-info-section h2 {
+    color: #0b3a66;
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.room-info-section p {
+    color: #666;
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.room-specs {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.spec-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: #f8f8f8;
+    border-radius: 5px;
+}
+
+.spec-item i {
+    color: #3b82f6;
+    font-size: 1.5rem;
+    margin-right: 10px;
+}
+
+.spec-item span {
+    color: #0b3a66;
+    font-weight: 500;
+}
+
+.price-section {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.price-section .price-label {
+    font-size: 1rem;
+    margin-bottom: 5px;
+}
+
+.price-section .price-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.booking-info-panel {
+    background: #f0f7ff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+    border-left: 4px solid #3b82f6;
+}
+
+.booking-info-panel h4 {
+    margin-bottom: 10px;
+    color: #0b3a66;
+}
+
+.booking-info-panel p {
+    margin: 5px 0;
+    color: #666;
+}
+
+.booking-info-panel i {
+    margin-right: 8px;
+}
+
+.booking-info-panel i.fa-check-circle {
+    color: #4CAF50;
+}
+
+.booking-info-panel i.fa-coffee {
+    color: #3b82f6;
+}
+
+.booking-info-panel i.fa-wifi {
+    color: #2196F3;
+}
+
+.booking-info-panel i.fa-clock {
+    color: #FF9800;
+}
+
+.amenities-section {
+    margin-top: 30px;
+    padding: 20px;
+    background: #f8f8f8;
+    border-radius: 10px;
+}
+
+.amenities-section h3 {
+    color: #0b3a66;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.amenities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.amenity-item {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.amenity-item i {
+    color: #3b82f6;
+    font-size: 1.3rem;
+    margin-right: 12px;
+}
+
+.amenity-item .amenity-name {
+    font-weight: 600;
+    color: #0b3a66;
+    margin-bottom: 5px;
+}
+
+.amenity-item .amenity-desc {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.btn-primary {
+    flex: 1;
+    padding: 15px;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary {
+    flex: 1;
+    padding: 15px;
+    background: #fff;
+    color: #0b3a66;
+    border: 2px solid #3b82f6;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-secondary:hover {
+    background: #f0f7ff;
+    border-color: #2563eb;
+}
+
+/* ===========================
+   RESPONSIVE BREAKPOINTS
+   =========================== */
+
+@media(max-width:1200px) {
+    #rooms-container {
+        grid-template-columns: repeat(3,1fr);
+    }
+}
+
+@media(max-width:900px) {
+    #rooms-container {
+        grid-template-columns: repeat(2,1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .room-details-content {
+        grid-template-columns: 1fr;
+    }
+
+    .room-specs {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+}
+
+@media(max-width:600px) {
+    #rooms-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .section-header {
+        margin: 20px auto;
+    }
+    
+    .filters-container {
+        grid-template-columns: 1fr;
+    }
 }

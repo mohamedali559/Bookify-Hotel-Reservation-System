@@ -1,7 +1,46 @@
-// Load booking data from localStorage
+/**
+ * Payment Processing Page - Payment Form & Invoice Generation
+ * Handles payment form display, validation, processing, and invoice PDF generation
+ * 
+ * Features:
+ * - Load booking data from localStorage
+ * - Display invoice with booking details
+ * - Simple card payment form (demo mode)
+ * - Client-side card validation
+ * - Payment processing via API
+ * - Invoice PDF generation and download
+ * - Cart cleanup after payment
+ * 
+ * Dependencies:
+ * - Toastify (notifications)
+ * - html2pdf (PDF generation)
+ * - Fetch API (payment processing)
+ * - localStorage (booking and payment data)
+ * 
+ * @file payment.js
+ * @description Payment processing and invoice generation functionality
+ * @requires Toastify, html2pdf
+ */
+
+/* ===========================
+   INITIAL SETUP & VALIDATION
+============================ */
+
+/**
+ * Load Booking Data
+ * Retrieves booking information from localStorage
+ * Required for payment processing and invoice generation
+ * @type {Object|null}
+ */
 const bookingData = JSON.parse(localStorage.getItem("bookingData"));
 
+/**
+ * Validate Booking Data Exists
+ * Redirects to rooms page if no booking data found
+ * Prevents accessing payment page without a booking
+ */
 if (!bookingData || !bookingData.bookingId) {
+    // Show error notification
     if (typeof Toastify !== 'undefined') {
         Toastify({
             text: "⚠ No booking found. Please complete booking first.",
@@ -14,12 +53,21 @@ if (!bookingData || !bookingData.bookingId) {
         alert("⚠ No booking found. Please complete booking first.");
     }
     
+    // Redirect to rooms page after 3 seconds
     setTimeout(() => {
         window.location.href = "/Room";
     }, 3000);
 }
 
-// Fill user info above payment form
+/* ===========================
+   FORM PRE-FILL
+============================ */
+
+/**
+ * Fill User Information
+ * Pre-populates name and email from booking data
+ * Saves user from re-entering information
+ */
 if (document.getElementById("name")) {
     document.getElementById("name").value = bookingData?.guestName || "";
 }
@@ -27,12 +75,27 @@ if (document.getElementById("email")) {
     document.getElementById("email").value = bookingData?.guestEmail || "";
 }
 
-// Calculate totals
+/* ===========================
+   PRICE CALCULATIONS
+============================ */
+
+/**
+ * Extract Pricing Information
+ * Gets nights, price per night, and total from booking data
+ */
 const nights = bookingData?.numberOfNights || 0;
 const pricePerNight = bookingData?.pricePerNight || 0;
 const totalPrice = bookingData?.totalPrice || 0;
 
-// Fill Invoice Dynamic Content
+/* ===========================
+   INVOICE DISPLAY
+============================ */
+
+/**
+ * Fill Invoice Dynamic Content
+ * Populates invoice section with complete booking details
+ * Displayed after payment processing
+ */
 const invoiceContent = document.getElementById("invoice-content");
 if (invoiceContent) {
     invoiceContent.innerHTML = `
@@ -48,17 +111,36 @@ if (invoiceContent) {
     `;
 }
 
+/**
+ * Display Total Price
+ * Shows final amount to be paid
+ */
 const totalPriceElement = document.getElementById("total-price");
 if (totalPriceElement) {
     totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
 }
 
+/**
+ * Display Subtotal
+ * Shows price breakdown (same as total in this case)
+ */
 const subtotalElement = document.getElementById("subtotal-price");
 if (subtotalElement) {
     subtotalElement.textContent = `$${totalPrice.toFixed(2)}`;
 }
 
-// Simple Card Input (Demo Mode - No Stripe)
+/* ===========================
+   PAYMENT FORM SETUP
+============================ */
+
+/**
+ * Create Simple Card Input Form
+ * Demo mode - No actual Stripe integration
+ * Creates card number, expiry, and CVC inputs
+ * 
+ * Note: This is a demo implementation
+ * In production, use Stripe Elements or similar secure payment processor
+ */
 const cardElement = document.getElementById("card-element");
 if (cardElement) {
     cardElement.innerHTML = `
@@ -76,47 +158,99 @@ if (cardElement) {
     `;
 }
 
-// Validate card inputs
+/* ===========================
+   CARD VALIDATION
+============================ */
+
+/**
+ * Validate Card Input Fields
+ * Client-side validation for card details
+ * 
+ * Validations:
+ * - Card number: Minimum 13 digits
+ * - Expiry: MM/YY format
+ * - CVC: Minimum 3 digits
+ * 
+ * @function validateCardInputs
+ * @returns {boolean} True if all inputs valid, false otherwise
+ */
 function validateCardInputs() {
     const cardNumber = document.getElementById("demo-card-number")?.value.trim();
     const expiry = document.getElementById("demo-card-expiry")?.value.trim();
     const cvc = document.getElementById("demo-card-cvc")?.value.trim();
     const errorDiv = document.getElementById("card-errors");
 
+    // Validate card number (minimum 13 digits)
     if (!cardNumber || cardNumber.length < 13) {
         if (errorDiv) errorDiv.textContent = "Please enter a valid card number";
         return false;
     }
+    
+    // Validate expiry format (MM/YY)
     if (!expiry || !expiry.match(/^\d{2}\/\d{2}$/)) {
         if (errorDiv) errorDiv.textContent = "Please enter expiry in MM/YY format";
         return false;
     }
+    
+    // Validate CVC (minimum 3 digits)
     if (!cvc || cvc.length < 3) {
         if (errorDiv) errorDiv.textContent = "Please enter a valid CVC";
         return false;
     }
 
+    // Clear error message if all valid
     if (errorDiv) errorDiv.textContent = "";
     return true;
 }
 
-// Pay button handler
+/* ===========================
+   PAYMENT PROCESSING
+============================ */
+
+/**
+ * Pay Button Click Handler
+ * Main payment processing function
+ * 
+ * Flow:
+ * 1. Validate card inputs
+ * 2. Prepare payment data
+ * 3. Send payment request to backend
+ * 4. Save payment confirmation
+ * 5. Show invoice
+ * 6. Clear cart
+ * 
+ * @async
+ * @listens click - On "Pay Now" button
+ */
 const payButton = document.getElementById("pay-btn");
 if (payButton) {
     payButton.addEventListener("click", async () => {
         const originalButtonText = payButton.innerHTML;
         
-        // Validate inputs
+        /* ===========================
+           STEP 1: VALIDATE CARD INPUTS
+        ============================ */
         if (!validateCardInputs()) {
             return;
         }
         
-        // Disable button and show loading
+        /* ===========================
+           STEP 2: SHOW LOADING STATE
+        ============================ */
         payButton.disabled = true;
         payButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Payment...';
 
         try {
-            // Prepare payment data
+            /* ===========================
+               STEP 3: PREPARE PAYMENT DATA
+            ============================ */
+            
+            /**
+             * Payment Data Object
+             * Sent to backend for processing
+             * Card number is masked for security
+             * @type {Object}
+             */
             const paymentData = {
                 bookingId: bookingData.bookingId,
                 amount: totalPrice,
@@ -127,7 +261,15 @@ if (payButton) {
 
             console.log("Sending payment request:", paymentData);
 
-            // Call backend to process payment
+            /* ===========================
+               STEP 4: SEND PAYMENT REQUEST
+            ============================ */
+            
+            /**
+             * API Call: Process Payment
+             * POST request to backend payment processor
+             * Endpoint: /Payment/ProcessPayment
+             */
             const response = await fetch('/Payment/ProcessPayment', {
                 method: 'POST',
                 headers: {
@@ -138,6 +280,7 @@ if (payButton) {
 
             console.log("Response status:", response.status);
 
+            // Check HTTP response status
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -145,8 +288,16 @@ if (payButton) {
             const result = await response.json();
             console.log("Payment result:", result);
 
+            /* ===========================
+               STEP 5: HANDLE SUCCESS
+            ============================ */
+            
             if (result.success) {
-                // Save payment info
+                /**
+                 * Payment Information
+                 * Saved to localStorage for reference
+                 * @type {Object}
+                 */
                 const paymentInfo = {
                     paymentId: result.paymentId,
                     transactionId: result.transactionId,
@@ -156,9 +307,13 @@ if (payButton) {
                     status: 'Completed'
                 };
                 
+                // Save payment confirmation
                 localStorage.setItem("paymentInfo", JSON.stringify(paymentInfo));
 
-                // Show success message
+                /**
+                 * Show Success Message
+                 * Display confirmation with transaction ID
+                 */
                 if (typeof Toastify !== 'undefined') {
                     Toastify({
                         text: `✓ Payment successful! Transaction ID: ${result.transactionId}`,
@@ -171,13 +326,19 @@ if (payButton) {
                     alert(`✓ Payment successful! Transaction ID: ${result.transactionId}`);
                 }
 
-                // Show invoice section
+                /**
+                 * Switch to Invoice View
+                 * Hide payment form, show invoice with download button
+                 */
                 const cardContainer = document.querySelector('.card-container');
                 const invoiceBox = document.querySelector('.invoice');
                 if (cardContainer) cardContainer.style.display = 'none';
                 if (invoiceBox) invoiceBox.style.display = 'block';
 
-                // Clear booking data from cart
+                /**
+                 * Clear Cart
+                 * Remove booked room from reservation cart
+                 */
                 let cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
                 cart = cart.filter(room => room.roomId !== bookingData.roomId);
                 localStorage.setItem('reservationRooms', JSON.stringify(cart));
@@ -186,6 +347,14 @@ if (payButton) {
                 throw new Error(result.message || 'Payment failed');
             }
         } catch (error) {
+            /* ===========================
+               STEP 6: HANDLE ERRORS
+            ============================ */
+            
+            /**
+             * Error Handler
+             * Catches network errors, payment failures, etc.
+             */
             console.error('Payment error:', error);
             
             if (typeof Toastify !== 'undefined') {
@@ -200,33 +369,63 @@ if (payButton) {
                 alert(`❌ Payment failed: ${error.message}`);
             }
 
-            // Re-enable button
+            // Re-enable button on error
             payButton.disabled = false;
             payButton.innerHTML = originalButtonText;
         }
     });
 }
 
-// PDF Download
+/* ===========================
+   PDF INVOICE GENERATION
+============================ */
+
+/**
+ * Download PDF Button Handler
+ * Generates and downloads invoice as PDF file
+ * 
+ * Features:
+ * - Converts invoice HTML to PDF
+ * - Custom filename with booking ID and timestamp
+ * - High quality output (scale: 2, quality: 0.98)
+ * - A4 portrait format
+ * 
+ * @listens click - On "Download Invoice" button
+ * @requires html2pdf library
+ */
 const downloadButton = document.getElementById("download-pdf");
 if (downloadButton) {
     downloadButton.addEventListener("click", () => {
         const element = document.getElementById("invoice-box");
 
+        /**
+         * Check html2pdf Library
+         * Verify library is loaded before attempting PDF generation
+         */
         if (typeof html2pdf === 'undefined') {
             alert("PDF library not loaded. Please refresh the page.");
             return;
         }
 
+        /**
+         * PDF Generation Options
+         * Configuration for html2pdf library
+         * @type {Object}
+         */
         const opt = {
-            margin: 10,
-            filename: `Invoice_Booking_${bookingData?.bookingId}_${Date.now()}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2, logging: false },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            margin: 10,                                                      // 10mm margin
+            filename: `Invoice_Booking_${bookingData?.bookingId}_${Date.now()}.pdf`,  // Dynamic filename
+            image: { type: 'jpeg', quality: 0.98 },                         // High quality images
+            html2canvas: { scale: 2, logging: false },                      // 2x scale for sharp text
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }   // A4 portrait
         };
 
+        /**
+         * Generate and Download PDF
+         * Converts HTML element to PDF and triggers download
+         */
         html2pdf().set(opt).from(element).save().then(() => {
+            // Show success notification
             if (typeof Toastify !== 'undefined') {
                 Toastify({
                     text: "✓ Invoice downloaded successfully!",
@@ -239,6 +438,7 @@ if (downloadButton) {
                 alert("✓ Invoice downloaded successfully!");
             }
         }).catch(err => {
+            // Handle PDF generation errors
             console.error("PDF generation error:", err);
             alert("Failed to generate PDF. Please try again.");
         });
