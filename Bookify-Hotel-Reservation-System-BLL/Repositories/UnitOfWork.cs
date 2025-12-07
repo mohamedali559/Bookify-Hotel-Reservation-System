@@ -8,6 +8,7 @@ public class UnitOfWork : IUnitOfWork
     private readonly BookifyDbContext _context;
 
     public IRoomRepository Rooms { get; private set; }
+    public IRoomTypeRepository RoomTypes { get; private set; }
     public IAmenityRepository Amenities { get; private set; }
     public IBookingRepository Bookings { get; private set; }
     public IReviewRepository Reviews { get; private set; }
@@ -18,6 +19,7 @@ public class UnitOfWork : IUnitOfWork
         _context = context;
         
         Rooms = new RoomRepository(_context);
+        RoomTypes = new RoomTypeRepository(_context);
         Amenities = new AmenityRepository(_context);
         Bookings = new BookingRepository(_context);
         Reviews = new ReviewRepository(_context);

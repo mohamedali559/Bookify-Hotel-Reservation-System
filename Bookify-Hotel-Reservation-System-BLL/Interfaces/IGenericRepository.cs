@@ -9,7 +9,6 @@ public interface IGenericRepository<T> where T : class
     void Add(T entity);
     T Update(T entity);
     bool Delete(int id);
-    void Save();
     
     // Additional methods for queries with includes
     IEnumerable<T> Find(Expression<Func<T, bool>> predicate);

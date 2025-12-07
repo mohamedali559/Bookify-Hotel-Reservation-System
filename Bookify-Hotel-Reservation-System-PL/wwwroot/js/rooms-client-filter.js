@@ -264,7 +264,26 @@ document.addEventListener("DOMContentLoaded", () => {
             );
         }
 
+        // Update URL with current filters (for bookmarking and sharing)
+        updateUrlWithFilters(searchText, roomType, guestsValue, priceRange);
+
         renderFilteredRooms(filteredRooms);
+    }
+
+    function updateUrlWithFilters(searchText, roomType, guests, price) {
+        const params = new URLSearchParams();
+        
+        if (searchText) params.set('searchText', searchText);
+        if (roomType) params.set('roomType', roomType);
+        if (guests) params.set('guests', guests);
+        if (price) params.set('price', price);
+        
+        const newUrl = params.toString() 
+            ? `${window.location.pathname}?${params.toString()}`
+            : window.location.pathname;
+        
+        // Update URL without reloading the page
+        window.history.pushState({ path: newUrl }, '', newUrl);
     }
 
     function renderFilteredRooms(filteredRooms) {
