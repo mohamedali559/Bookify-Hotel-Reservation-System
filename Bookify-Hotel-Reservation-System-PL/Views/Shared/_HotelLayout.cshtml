@@ -91,7 +91,7 @@
                 @if (isAuthenticated)
                 {
                     <div class="user-dropdown">
-                        <button class="user-dropdown-toggle" onclick="toggleUserDropdown()">
+                        <button class="user-dropdown-toggle" onclick="toggleUserDropdown(event)" type="button">
                             <i class="fas fa-user-circle"></i>
                             <span>@userName</span>
                             <i class="fas fa-chevron-down" style="font-size: 12px;"></i>
@@ -120,6 +120,7 @@
                             </a>
                             <div class="dropdown-divider"></div>
                             <form method="post" asp-controller="Account" asp-action="Logout" style="margin: 0;">
+                                @Html.AntiForgeryToken()
                                 <button type="submit">
                                     <i class="fas fa-sign-out-alt"></i> Logout
                                 </button>
