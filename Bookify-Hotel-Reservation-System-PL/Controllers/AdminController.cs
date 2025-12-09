@@ -56,7 +56,6 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             return View(bookings);
         }
 
-        // API Endpoints for CRUD operations
 
         // Get all rooms as JSON
         [HttpGet]
