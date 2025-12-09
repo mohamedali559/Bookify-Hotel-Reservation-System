@@ -1,4 +1,4 @@
-using Bookify_Hotel_Reservation_System__DAL.Contexts;
+﻿using Bookify_Hotel_Reservation_System__DAL.Contexts;
 using Bookify_Hotel_Reservation_System__DAL.Models;
 using Bookify_Hotel_Reservation_System_BLL.Interfaces;
 using Bookify_Hotel_Reservation_System_BLL.Repositories;
@@ -24,8 +24,8 @@ builder.Services.AddIdentity<ApplicationUser, ApplicationRole>(options =>
     options.User.RequireUniqueEmail = true;
 
     // Lockout settings
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
     options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
 })
 .AddEntityFrameworkStores<BookifyDbContext>()
 .AddDefaultTokenProviders();
@@ -151,7 +151,7 @@ static async Task SeedRolesAndAdminAsync(RoleManager<ApplicationRole> roleManage
             EmailConfirmed = true,
             Address = "mansoura"
         };
-
+        // password → Admin@123
         var result = await userManager.CreateAsync(admin, "Admin@123");
 
         if (!result.Succeeded)
