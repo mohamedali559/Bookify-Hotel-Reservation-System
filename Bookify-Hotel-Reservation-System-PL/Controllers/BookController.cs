@@ -158,7 +158,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                 return Json(new { success = false, message = "Unauthorized" });
             }
 
-            if (booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled)
+            if (booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Confirmed )
             {
                 return Json(new { success = false, message = "Cannot cancel this booking" });
             }
@@ -170,6 +170,8 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             return Json(new { success = true, message = "Booking cancelled successfully" });
         }
 
+
+        // this function is called by ajax to make the booked dates in red color
         [HttpGet]
         public IActionResult GetBookedDates(int roomId)
         {

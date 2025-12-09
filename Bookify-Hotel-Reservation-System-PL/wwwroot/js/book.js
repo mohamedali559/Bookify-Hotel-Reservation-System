@@ -76,7 +76,7 @@ if (selectedRoom) {
 }
 
 /* ===========================
-   FLATPICKR DATE PICKER WITH BOOKED DATES
+   FLATPICKR DATE PICKER WITH BOOKED DATES  ==> AI 
 ============================ */
 
 async function loadBookedDatesAndInitializePicker() {

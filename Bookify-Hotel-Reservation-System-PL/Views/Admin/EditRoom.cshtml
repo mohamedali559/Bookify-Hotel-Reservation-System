@@ -1,0 +1,95 @@
+@model Bookify_Hotel_Reservation_System_PL.Models.RoomFormViewModel
+
+@{
+    ViewData["Title"] = "Edit Room";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="management-container">
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="management-header">
+        <div>
+            <h2><i class="fas fa-edit"></i> Edit Room</h2>
+            <p class="text-muted">Update room details</p>
+        </div>
+        <div class="management-actions">
+            <a asp-controller="Admin" asp-action="Rooms" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Rooms
+            </a>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <div class="card-body">
+            <form asp-action="EditRoom" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="RoomForm.Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="RoomForm.RoomNumber" class="form-label">Room Number <span class="text-danger">*</span></label>
+                        <input asp-for="RoomForm.RoomNumber" class="form-control" placeholder="e.g., 101" />
+                        <span asp-validation-for="RoomForm.RoomNumber" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label asp-for="RoomForm.Floor" class="form-label">Floor <span class="text-danger">*</span></label>
+                        <input asp-for="RoomForm.Floor" class="form-control" type="number" placeholder="e.g., 1" />
+                        <span asp-validation-for="RoomForm.Floor" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label asp-for="RoomForm.RoomTypeId" class="form-label">Room Type <span class="text-danger">*</span></label>
+                        <select asp-for="RoomForm.RoomTypeId" class="form-select">
+                            <option value="0">-- Select Room Type --</option>
+                            @if (Model?.RoomTypes != null)
+                            {
+                                @foreach (var roomType in Model.RoomTypes)
+                                {
+                                    <option value="@roomType.Id">@roomType.Name - $@roomType.BasePrice</option>
+                                }
+                            }
+                        </select>
+                        <span asp-validation-for="RoomForm.RoomTypeId" class="text-danger"></span>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label asp-for="RoomForm.IsAvailable" class="form-label">Availability Status</label>
+                        <select asp-for="RoomForm.IsAvailable" class="form-select">
+                            <option value="true">Available</option>
+                            <option value="false">Occupied</option>
+                        </select>
+                    </div>
+                    
+                    <div class="col-12">
+                        <label asp-for="RoomForm.ImageUrl" class="form-label">Image URL <span class="text-danger">*</span></label>
+                        <input asp-for="RoomForm.ImageUrl" class="form-control" placeholder="https://example.com/image.jpg" />
+                        <span asp-validation-for="RoomForm.ImageUrl" class="text-danger"></span>
+                        <small class="form-text text-muted">Enter a valid URL for the room image</small>
+                    </div>
+                    
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Update Room
+                        </button>
+                        <a asp-action="Rooms" class="btn btn-secondary">
+                            <i class="fas fa-times"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

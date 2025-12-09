@@ -1,4 +1,3 @@
-using Bookify_Hotel_Reservation_System__DAL.Contexts;
 using Bookify_Hotel_Reservation_System__DAL.Models;
 using Bookify_Hotel_Reservation_System_BLL.Interfaces;
 using Bookify_Hotel_Reservation_System_PL.Models;
@@ -14,15 +13,12 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
     public class AdminController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
-        private readonly BookifyDbContext _context;
         private readonly UserManager<ApplicationUser> userManager;
 
-        public AdminController(IUnitOfWork unitOfWork, BookifyDbContext context, UserManager<ApplicationUser> userManager)
+        public AdminController(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
-            _context = context;
             this.userManager = userManager;
-
         }
 
         // Dashboard
@@ -30,30 +26,344 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         {
             // Get statistics for dashboard cards
             var booking = _unitOfWork.Bookings.GetAll();
-            var totalBookings = booking.Count();
-            var totalRevenue = booking.Sum(b => b.Price);
-            var totalRooms = booking.Count();
-            var totalRoomTypes = _context.RoomTypes.Count();
+            
+            var viewModel = new DashboardViewModel
+            {
+                TotalBookings = booking.Count(),
+                TotalRevenue = booking.Sum(b => b.Price),
+                TotalRooms = booking.Count(),
+                TotalRoomTypes = _unitOfWork.RoomTypes.GetAll().Count()
+            };
 
-            ViewBag.TotalRevenue = totalRevenue;
-            ViewBag.TotalRooms = totalRooms;
-            ViewBag.TotalRoomTypes = totalRoomTypes;
-
-            return View();
+            return View(viewModel);
         }
 
         // Rooms Management
         public IActionResult Rooms()
         {
-            var rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType();
-            return View(rooms);
+            var viewModel = new AdminRoomsViewModel
+            {
+                Rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType(),
+                RoomTypes = _unitOfWork.RoomTypes.GetAll(),
+                RoomForm = new RoomViewModel()
+            };
+            return View(viewModel);
+        }
+
+        // Add Room - GET
+        [HttpGet]
+        public IActionResult AddRoom()
+        {
+            var viewModel = new RoomFormViewModel
+            {
+                RoomTypes = _unitOfWork.RoomTypes.GetAll(),
+                RoomForm = new RoomViewModel()
+            };
+            return View(viewModel);
+        }
+
+        // Add Room - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddRoom(RoomFormViewModel viewModel)
+        {
+            // Ensure RoomForm is not null
+            if (viewModel?.RoomForm == null)
+            {
+                ModelState.AddModelError("", "Invalid form data. Please try again.");
+                viewModel = new RoomFormViewModel
+                {
+                    RoomTypes = _unitOfWork.RoomTypes.GetAll(),
+                    RoomForm = new RoomViewModel()
+                };
+                TempData["Error"] = "Invalid form submission. Please fill all required fields.";
+                return View(viewModel);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Always reload RoomTypes before returning view
+                viewModel.RoomTypes = _unitOfWork.RoomTypes.GetAll();
+                
+                // Get all validation errors for debugging
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                
+                TempData["Error"] = $"Please correct the errors: {string.Join(", ", errors)}";
+                return View(viewModel);
+            }
+
+            var room = new Room
+            {
+                RoomNumber = viewModel.RoomForm.RoomNumber,
+                Floor = viewModel.RoomForm.Floor,
+                RoomTypeId = viewModel.RoomForm.RoomTypeId,
+                IsAvailable = viewModel.RoomForm.IsAvailable,
+                ImageUrl = viewModel.RoomForm.ImageUrl
+            };
+
+            _unitOfWork.Rooms.Add(room);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Room added successfully!";
+            return RedirectToAction(nameof(Rooms));
+        }
+
+        // Edit Room - GET
+        [HttpGet]
+        public IActionResult EditRoom(int id)
+        {
+            var room = _unitOfWork.Rooms.Get(id);
+            if (room == null)
+            {
+                TempData["Error"] = "Room not found.";
+                return RedirectToAction(nameof(Rooms));
+            }
+
+            var model = new RoomViewModel
+            {
+                Id = room.Id,
+                RoomNumber = room.RoomNumber,
+                Floor = room.Floor,
+                RoomTypeId = room.RoomTypeId,
+                IsAvailable = room.IsAvailable,
+                ImageUrl = room.ImageUrl
+            };
+
+            var viewModel = new RoomFormViewModel
+            {
+                RoomTypes = _unitOfWork.RoomTypes.GetAll(),
+                RoomForm = model
+            };
+
+            return View(viewModel);
+        }
+
+        // Edit Room - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditRoom(RoomFormViewModel viewModel)
+        {
+            // Ensure RoomForm is not null
+            if (viewModel?.RoomForm == null)
+            {
+                TempData["Error"] = "Invalid form data. Please try again.";
+                return RedirectToAction(nameof(Rooms));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Always reload RoomTypes before returning view
+                viewModel.RoomTypes = _unitOfWork.RoomTypes.GetAll();
+                
+                // Get all validation errors for debugging
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                
+                TempData["Error"] = $"Please correct the errors: {string.Join(", ", errors)}";
+                return View(viewModel);
+            }
+
+            var room = _unitOfWork.Rooms.Get(viewModel.RoomForm.Id);
+            if (room == null)
+            {
+                TempData["Error"] = "Room not found.";
+                return RedirectToAction(nameof(Rooms));
+            }
+
+            room.RoomNumber = viewModel.RoomForm.RoomNumber;
+            room.Floor = viewModel.RoomForm.Floor;
+            room.RoomTypeId = viewModel.RoomForm.RoomTypeId;
+            room.IsAvailable = viewModel.RoomForm.IsAvailable;
+            room.ImageUrl = viewModel.RoomForm.ImageUrl;
+
+            _unitOfWork.Rooms.Update(room);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Room updated successfully!";
+            return RedirectToAction(nameof(Rooms));
+        }
+
+        // Delete Room - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteRoom(int id)
+        {
+            var room = _unitOfWork.Rooms.Get(id);
+            if (room == null)
+            {
+                TempData["Error"] = "Room not found.";
+                return RedirectToAction(nameof(Rooms));
+            }
+
+            _unitOfWork.Rooms.Delete(id);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Room deleted successfully!";
+            return RedirectToAction(nameof(Rooms));
         }
 
         // Room Types Management
         public IActionResult RoomTypes()
         {
-            var roomTypes = _context.RoomTypes.ToList();
-            return View(roomTypes);
+            var viewModel = new AdminRoomTypesViewModel
+            {
+                RoomTypes = _unitOfWork.RoomTypes.GetAll(),
+                RoomTypeForm = new RoomTypeViewModel()
+            };
+            return View(viewModel);
+        }
+
+        // Add Room Type - GET
+        [HttpGet]
+        public IActionResult AddRoomType()
+        {
+            var viewModel = new RoomTypeFormViewModel
+            {
+                RoomTypeForm = new RoomTypeViewModel()
+            };
+            return View(viewModel);
+        }
+
+        // Add Room Type - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AddRoomType(RoomTypeFormViewModel viewModel)
+        {
+            // Ensure RoomTypeForm is not null
+            if (viewModel?.RoomTypeForm == null)
+            {
+                ModelState.AddModelError("", "Invalid form data. Please try again.");
+                viewModel = new RoomTypeFormViewModel
+                {
+                    RoomTypeForm = new RoomTypeViewModel()
+                };
+                TempData["Error"] = "Invalid form submission. Please fill all required fields.";
+                return View(viewModel);
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Get all validation errors for debugging
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                
+                TempData["Error"] = $"Please correct the errors: {string.Join(", ", errors)}";
+                return View(viewModel);
+            }
+
+            var roomType = new RoomType
+            {
+                Name = viewModel.RoomTypeForm.Name,
+                Description = viewModel.RoomTypeForm.Description,
+                Area = viewModel.RoomTypeForm.Area,
+                Guests = viewModel.RoomTypeForm.Guests,
+                BasePrice = viewModel.RoomTypeForm.BasePrice
+            };
+
+            _unitOfWork.RoomTypes.Add(roomType);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Room Type added successfully!";
+            return RedirectToAction(nameof(RoomTypes));
+        }
+
+        // Edit Room Type - GET
+        [HttpGet]
+        public IActionResult EditRoomType(int id)
+        {
+            var roomType = _unitOfWork.RoomTypes.Get(id);
+            if (roomType == null)
+            {
+                TempData["Error"] = "Room Type not found.";
+                return RedirectToAction(nameof(RoomTypes));
+            }
+
+            var model = new RoomTypeViewModel
+            {
+                Id = roomType.Id,
+                Name = roomType.Name,
+                Description = roomType.Description,
+                Area = roomType.Area,
+                Guests = roomType.Guests,
+                BasePrice = roomType.BasePrice
+            };
+
+            var viewModel = new RoomTypeFormViewModel
+            {
+                RoomTypeForm = model
+            };
+
+            return View(viewModel);
+        }
+
+        // Edit Room Type - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult EditRoomType(RoomTypeFormViewModel viewModel)
+        {
+            // Ensure RoomTypeForm is not null
+            if (viewModel?.RoomTypeForm == null)
+            {
+                TempData["Error"] = "Invalid form data. Please try again.";
+                return RedirectToAction(nameof(RoomTypes));
+            }
+
+            if (!ModelState.IsValid)
+            {
+                // Get all validation errors for debugging
+                var errors = ModelState.Values
+                    .SelectMany(v => v.Errors)
+                    .Select(e => e.ErrorMessage)
+                    .ToList();
+                
+                TempData["Error"] = $"Please correct the errors: {string.Join(", ", errors)}";
+                return View(viewModel);
+            }
+
+            var roomType = _unitOfWork.RoomTypes.Get(viewModel.RoomTypeForm.Id);
+            if (roomType == null)
+            {
+                TempData["Error"] = "Room Type not found.";
+                return RedirectToAction(nameof(RoomTypes));
+            }
+
+            roomType.Name = viewModel.RoomTypeForm.Name;
+            roomType.Description = viewModel.RoomTypeForm.Description;
+            roomType.Area = viewModel.RoomTypeForm.Area;
+            roomType.Guests = viewModel.RoomTypeForm.Guests;
+            roomType.BasePrice = viewModel.RoomTypeForm.BasePrice;
+
+            _unitOfWork.RoomTypes.Update(roomType);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Room Type updated successfully!";
+            return RedirectToAction(nameof(RoomTypes));
+        }
+
+        // Delete Room Type - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteRoomType(int id)
+        {
+            var roomType = _unitOfWork.RoomTypes.Get(id);
+            if (roomType == null)
+            {
+                TempData["Error"] = "Room Type not found.";
+                return RedirectToAction(nameof(RoomTypes));
+            }
+
+            _unitOfWork.RoomTypes.Delete(id);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Room Type deleted successfully!";
+            return RedirectToAction(nameof(RoomTypes));
         }
 
         // Bookings Management
@@ -63,84 +373,24 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             return View(bookings);
         }
 
-        // API Endpoints for CRUD operations
-
-        // Get all rooms as JSON
-        [HttpGet]
-        public IActionResult GetRooms()
-        {
-            var rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType()
-                .Select(r => new
-                {
-                    id = r.Id,
-                    roomNumber = r.RoomNumber,
-                    floor = r.Floor,
-                    roomType = r.RoomType?.Name ?? "N/A",
-                    basePrice = r.RoomType?.BasePrice ?? 0,
-                    isAvailable = r.IsAvailable,
-                    imageUrl = r.ImageUrl
-                });
-            return Json(rooms);
-        }
-
-        // Get all room types as JSON
-        [HttpGet]
-        public IActionResult GetRoomTypes()
-        {
-            var roomTypes = _context.RoomTypes
-                .Select(rt => new
-                {
-                    id = rt.Id,
-                    name = rt.Name,
-                    description = rt.Description,
-                    area = rt.Area,
-                    guests = rt.Guests,
-                    basePrice = rt.BasePrice
-                });
-            return Json(roomTypes);
-        }
-
-        // Get all bookings as JSON
-        [HttpGet]
-        public IActionResult GetBookings()
-        {
-            var bookings = _unitOfWork.Bookings.GetAllWithRoomsAndUser()
-                .Select(b => new
-                {
-                    id = b.Id,
-                    customerName = b.User?.FullName ?? "N/A",
-                    roomNumber = b.Room?.RoomNumber ?? "N/A",
-                    checkIn = b.CheckInDate.ToString("yyyy-MM-dd"),
-                    checkOut = b.CheckOutDate.ToString("yyyy-MM-dd"),
-                    price = b.Price,
-                    status = b.Status.ToString(),
-                    createdAt = b.CreatedAt.ToString("yyyy-MM-dd HH:mm")
-                });
-            return Json(bookings);
-        }
-
         // Cancel booking (Admin)
         [HttpPost]
-        public IActionResult CancelBooking([FromBody] int id)
+        [ValidateAntiForgeryToken]
+        public IActionResult CancelBooking(int id)
         {
-            try
+            var booking = _unitOfWork.Bookings.Get(id);
+            if (booking == null)
             {
-                var booking = _unitOfWork.Bookings.Get(id);
-                if (booking == null)
-                {
-                    return Json(new { success = false, message = "Booking not found" });
-                }
-
-                booking.Status = Bookify_Hotel_Reservation_System__DAL.Models.BookingStatus.Cancelled;
-                _unitOfWork.Bookings.Update(booking);
-                _unitOfWork.Complete();
-
-                return Json(new { success = true, message = "Booking cancelled successfully" });
+                TempData["Error"] = "Booking not found.";
+                return RedirectToAction(nameof(Bookings));
             }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
+
+            booking.Status = Bookify_Hotel_Reservation_System__DAL.Models.BookingStatus.Cancelled;
+            _unitOfWork.Bookings.Update(booking);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Booking cancelled successfully!";
+            return RedirectToAction(nameof(Bookings));
         }
 
         [HttpGet]

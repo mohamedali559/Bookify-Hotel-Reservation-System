@@ -6,50 +6,28 @@
 }
 
 <div class="management-container">
-    <!-- Header with Filter Options -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
     <div class="management-header">
         <div>
             <h2><i class="fas fa-calendar-check"></i> Bookings Management</h2>
             <p class="text-muted">View and manage all hotel bookings</p>
         </div>
-        <div class="management-actions">
-            <button class="btn btn-secondary" id="exportBtn">
-                <i class="fas fa-file-export"></i> Export
-            </button>
-        </div>
     </div>
 
-    <!-- Filter Section -->
-    <div class="filter-card mb-4">
-        <div class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">Status</label>
-                <select class="form-select" id="filterStatus">
-                    <option value="">All Status</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Confirmed">Confirmed</option>
-                    <option value="Completed">Completed</option>
-                    <option value="Cancelled">Cancelled</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Date From</label>
-                <input type="date" class="form-control" id="filterDateFrom">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">Date To</label>
-                <input type="date" class="form-control" id="filterDateTo">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">&nbsp;</label>
-                <button class="btn btn-primary w-100" id="applyFilters">
-                    <i class="fas fa-filter"></i> Apply Filters
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Bookings Table -->
     <div class="table-card">
         <div class="table-responsive">
             <table id="bookingsTable" class="table table-hover">
@@ -108,22 +86,15 @@
                             <td>@booking.CreatedAt.ToString("MMM dd, yyyy")</td>
                             <td>
                                 <div class="action-buttons">
-                                    <button class="btn btn-sm btn-view" 
-                                            data-id="@booking.Id"
-                                            data-customer="@(booking.User?.FullName ?? "N/A")"
-                                            data-room="@(booking.Room?.RoomNumber ?? "N/A")"
-                                            data-checkin="@booking.CheckInDate.ToString("yyyy-MM-dd")"
-                                            data-checkout="@booking.CheckOutDate.ToString("yyyy-MM-dd")"
-                                            data-price="@booking.Price"
-                                            data-status="@booking.Status"
-                                            title="View Details">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
                                     @if (booking.Status.ToString() != "Cancelled" && booking.Status.ToString() != "Completed")
                                     {
-                                        <button class="btn btn-sm btn-cancel" data-id="@booking.Id" title="Cancel Booking">
-                                            <i class="fas fa-ban"></i>
-                                        </button>
+                                        <form asp-action="CancelBooking" method="post" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@booking.Id" />
+                                            <button type="submit" class="btn btn-sm btn-cancel" title="Cancel Booking">
+                                                <i class="fas fa-ban"></i>
+                                            </button>
+                                        </form>
                                     }
                                 </div>
                             </td>
@@ -135,75 +106,18 @@
     </div>
 </div>
 
-<!-- View Booking Details Modal -->
-<div class="modal fade" id="viewBookingModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title"><i class="fas fa-info-circle"></i> Booking Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="booking-details">
-                    <div class="row g-4">
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-hashtag"></i> Booking ID</label>
-                                <p id="viewBookingId"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-user"></i> Customer Name</label>
-                                <p id="viewCustomerName"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-bed"></i> Room Number</label>
-                                <p id="viewRoomNumber"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-dollar-sign"></i> Total Price</label>
-                                <p id="viewPrice"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-calendar-alt"></i> Check-In Date</label>
-                                <p id="viewCheckIn"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-calendar-alt"></i> Check-Out Date</label>
-                                <p id="viewCheckOut"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-info-circle"></i> Status</label>
-                                <p id="viewStatus"></p>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="detail-item">
-                                <label><i class="fas fa-moon"></i> Nights</label>
-                                <p id="viewNights"></p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 @section Scripts {
-    <script src="~/js/admin-bookings.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#bookingsTable').DataTable({
+                responsive: true,
+                pageLength: 10,
+                order: [[0, 'desc']],
+                language: {
+                    search: "Search Bookings:",
+                    lengthMenu: "Show _MENU_ bookings per page"
+                }
+            });
+        });
+    </script>
 }

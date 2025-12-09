@@ -15,6 +15,7 @@ public class BookingRepository : GenericRepository<Booking>, IBookingRepository
     {
         return _context.Bookings
             .Include(b => b.Room)
+                .ThenInclude(r => r.RoomType)
             .Include(b => b.User)
             .ToList();
     }
