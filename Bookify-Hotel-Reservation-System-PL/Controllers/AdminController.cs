@@ -1,8 +1,12 @@
-using Bookify_Hotel_Reservation_System_BLL.Interfaces;
 using Bookify_Hotel_Reservation_System__DAL.Contexts;
+using Bookify_Hotel_Reservation_System__DAL.Models;
+using Bookify_Hotel_Reservation_System_BLL.Interfaces;
+using Bookify_Hotel_Reservation_System_PL.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Bookify_Hotel_Reservation_System_PL.Controllers
 {
@@ -11,23 +15,26 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly BookifyDbContext _context;
+        private readonly UserManager<ApplicationUser> userManager;
 
-        public AdminController(IUnitOfWork unitOfWork, BookifyDbContext context)
+        public AdminController(IUnitOfWork unitOfWork, BookifyDbContext context, UserManager<ApplicationUser> userManager)
         {
             _unitOfWork = unitOfWork;
             _context = context;
+            this.userManager = userManager;
+
         }
 
         // Dashboard
         public IActionResult Index()
         {
             // Get statistics for dashboard cards
-            var totalBookings = _unitOfWork.Bookings.GetAll().Count();
-            var totalRevenue = _unitOfWork.Bookings.GetAll().Sum(b => b.Price);
-            var totalRooms = _unitOfWork.Rooms.GetAll().Count();
+            var booking = _unitOfWork.Bookings.GetAll();
+            var totalBookings = booking.Count();
+            var totalRevenue = booking.Sum(b => b.Price);
+            var totalRooms = booking.Count();
             var totalRoomTypes = _context.RoomTypes.Count();
 
-            ViewBag.TotalBookings = totalBookings;
             ViewBag.TotalRevenue = totalRevenue;
             ViewBag.TotalRooms = totalRooms;
             ViewBag.TotalRoomTypes = totalRoomTypes;
@@ -134,6 +141,53 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             {
                 return Json(new { success = false, message = ex.Message });
             }
+        }
+
+        [HttpGet]
+        public IActionResult CreateAdmin()
+        {
+            return View("CreateAdmin");
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> CreateAdmin(RegisterViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("CreateAdmin", model);
+            }
+            ApplicationUser user = new ApplicationUser
+            {
+                UserName = model.Email,
+                Email = model.Email,
+                FullName = model.FullName,
+                Address = model.Address,
+                PhoneNumber = model.PhoneNumber
+            };
+
+            // check if the Email is Already in use
+            var existingEmail = await userManager.FindByEmailAsync(user.Email);
+            if(existingEmail != null)
+            {
+                ModelState.AddModelError("Email", "Email is Already in use");
+                return View("CreateAdmin", model);
+            }
+
+            var result = await userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                // assign admin role instead of User
+                await userManager.AddToRoleAsync(user, "Admin");
+                return RedirectToAction("Index");
+            }
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+
+            return View("CreateAdmin", model);
         }
     }
 }
