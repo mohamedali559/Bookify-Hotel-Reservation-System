@@ -16,9 +16,38 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             _unitOfWork = unitOfWork;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int bookingId)
         {
-            return View();
+            if (bookingId <= 0)
+            {
+                TempData["ErrorMessage"] = "Invalid booking ID";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var booking = _unitOfWork.Bookings.GetAllWithRoomsAndUser()
+                .FirstOrDefault(b => b.Id == bookingId);
+
+            if (booking == null)
+            {
+                TempData["ErrorMessage"] = "Booking not found";
+                return RedirectToAction("Index", "Home");
+            }
+
+            var nights = (booking.CheckOutDate - booking.CheckInDate).Days;
+
+            var model = new PaymentViewModel
+            {
+                BookingId = booking.Id,
+                Amount = booking.Price,
+                GuestName = booking.User?.FullName,
+                GuestEmail = booking.User?.Email,
+                RoomTypeName = booking.Room?.RoomType?.Name,
+                CheckInDate = booking.CheckInDate,
+                CheckOutDate = booking.CheckOutDate,
+                NumberOfNights = nights
+            };
+
+            return View(model);
         }
 
         [HttpPost]

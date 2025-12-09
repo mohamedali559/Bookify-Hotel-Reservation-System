@@ -22,56 +22,65 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             _userManager = userManager;
         }
 
-        public IActionResult Index()
+        // The page where the user choose the checkin & checkout dates
+        [HttpGet]
+        public async Task<IActionResult> Index()
         {
-            return View();
+            // new VM to add the name & email to the form
+            var model = new BookingViewModel();
+            
+            if (User.Identity?.IsAuthenticated == true)
+            {
+                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var user = await _userManager.FindByIdAsync(userId!);
+                
+                if (user != null)
+                {
+                    model.GuestName = user.FullName;
+                    model.GuestEmail = user.Email!;
+                }
+            }
+            
+            return View(model);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateBooking([FromBody] BookingViewModel model)
+        [ValidateAntiForgeryToken]
+        [Authorize]
+        public async Task<IActionResult> Index(BookingViewModel model)
         {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
             try
             {
-                if (!ModelState.IsValid)
-                {
-                    var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
-                    return Json(new { success = false, message = "Invalid booking data: " + string.Join(", ", errors) });
-                }
-
                 if (model.CheckInDate < DateTime.Today)
                 {
-                    return Json(new { success = false, message = "Check-in date cannot be in the past" });
+                    ModelState.AddModelError(nameof(model.CheckInDate), "Check-in date cannot be in the past");
+                    return View(model);
                 }
 
                 if (model.CheckOutDate <= model.CheckInDate)
                 {
-                    return Json(new { success = false, message = "Check-out date must be after check-in date" });
+                    ModelState.AddModelError(nameof(model.CheckOutDate), "Check-out date must be after check-in date");
+                    return View(model);
                 }
 
                 var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                
-                if (string.IsNullOrEmpty(userId))
-                {
-                    var defaultUser = await _userManager.Users.FirstOrDefaultAsync();
-                    if (defaultUser != null)
-                    {
-                        userId = defaultUser.Id;
-                    }
-                    else
-                    {
-                        return Json(new { success = false, message = "No users found in database. Please register first." });
-                    }
-                }
 
                 var room = _unitOfWork.Rooms.GetByIdWithAmenitiesAndRoomType(model.RoomId);
                 if (room == null)
                 {
-                    return Json(new { success = false, message = "Room not found" });
+                    ModelState.AddModelError(nameof(model.RoomId), "Room not found");
+                    return View(model);
                 }
 
                 if (room.RoomType == null)
                 {
-                    return Json(new { success = false, message = "Room type information not available" });
+                    ModelState.AddModelError(nameof(model.RoomId), "Room type information not available");
+                    return View(model);
                 }
 
                 var existingBookings = _unitOfWork.Bookings.GetAll()
@@ -84,7 +93,8 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
 
                 if (existingBookings.Any())
                 {
-                    return Json(new { success = false, message = "Room is not available for the selected dates" });
+                    ModelState.AddModelError("", "Room is not available for the selected dates");
+                    return View(model);
                 }
 
                 var nights = (model.CheckOutDate - model.CheckInDate).Days;
@@ -93,7 +103,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                 var booking = new Booking
                 {
                     RoomId = model.RoomId,
-                    UserId = userId,
+                    UserId = userId!,
                     CheckInDate = model.CheckInDate,
                     CheckOutDate = model.CheckOutDate,
                     Price = totalPrice,
@@ -104,30 +114,12 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                 _unitOfWork.Bookings.Add(booking);
                 _unitOfWork.Complete();
 
-                return Json(new
-                {
-                    success = true,
-                    message = "Booking created successfully",
-                    bookingId = booking.Id,
-                    totalPrice = totalPrice,
-                    nights = nights
-                });
+                return RedirectToAction("Index", "Payment", new { bookingId = booking.Id });
             }
             catch (Exception ex)
             {
-                // Log the detailed error for debugging
-                Console.WriteLine($"Booking Error: {ex.Message}");
-                Console.WriteLine($"Stack Trace: {ex.StackTrace}");
-                if (ex.InnerException != null)
-                {
-                    Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-                }
-                
-                return Json(new { 
-                    success = false, 
-                    message = "Error creating booking: " + ex.Message,
-                    details = ex.InnerException?.Message 
-                });
+                ModelState.AddModelError("", $"Error creating booking: {ex.Message}");
+                return View(model);
             }
         }
 
@@ -176,6 +168,29 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             _unitOfWork.Complete();
 
             return Json(new { success = true, message = "Booking cancelled successfully" });
+        }
+
+        [HttpGet]
+        public IActionResult GetBookedDates(int roomId)
+        {
+            try
+            {
+                var bookedDates = _unitOfWork.Bookings.GetAll()
+                    .Where(b => b.RoomId == roomId &&
+                               b.Status != BookingStatus.Cancelled)
+                    .Select(b => new
+                    {
+                        checkIn = b.CheckInDate.ToString("yyyy-MM-dd"),
+                        checkOut = b.CheckOutDate.ToString("yyyy-MM-dd")
+                    })
+                    .ToList();
+
+                return Json(new { success = true, bookedDates });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
         }
     }
 }

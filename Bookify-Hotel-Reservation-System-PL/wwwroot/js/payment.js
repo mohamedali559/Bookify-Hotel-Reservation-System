@@ -3,7 +3,7 @@
  * Handles payment form display, validation, processing, and invoice PDF generation
  * 
  * Features:
- * - Load booking data from localStorage
+ * - Load booking data from server-side model (via data attributes)
  * - Display invoice with booking details
  * - Simple card payment form (demo mode)
  * - Client-side card validation
@@ -15,7 +15,7 @@
  * - Toastify (notifications)
  * - html2pdf (PDF generation)
  * - Fetch API (payment processing)
- * - localStorage (booking and payment data)
+ * - DOM data attributes (booking data)
  * 
  * @file payment.js
  * @description Payment processing and invoice generation functionality
@@ -27,12 +27,22 @@
 ============================ */
 
 /**
- * Load Booking Data
- * Retrieves booking information from localStorage
+ * Load Booking Data from DOM
+ * Retrieves booking information from data attributes set by server
  * Required for payment processing and invoice generation
  * @type {Object|null}
  */
-const bookingData = JSON.parse(localStorage.getItem("bookingData"));
+const bookingDataElement = document.getElementById("booking-data");
+const bookingData = bookingDataElement ? {
+    bookingId: parseInt(bookingDataElement.dataset.bookingId),
+    guestName: bookingDataElement.dataset.guestName,
+    guestEmail: bookingDataElement.dataset.guestEmail,
+    roomTypeName: bookingDataElement.dataset.roomType,
+    checkInDate: bookingDataElement.dataset.checkIn,
+    checkOutDate: bookingDataElement.dataset.checkOut,
+    numberOfNights: parseInt(bookingDataElement.dataset.nights),
+    totalPrice: parseFloat(bookingDataElement.dataset.totalPrice)
+} : null;
 
 /**
  * Validate Booking Data Exists
@@ -60,32 +70,16 @@ if (!bookingData || !bookingData.bookingId) {
 }
 
 /* ===========================
-   FORM PRE-FILL
-============================ */
-
-/**
- * Fill User Information
- * Pre-populates name and email from booking data
- * Saves user from re-entering information
- */
-if (document.getElementById("name")) {
-    document.getElementById("name").value = bookingData?.guestName || "";
-}
-if (document.getElementById("email")) {
-    document.getElementById("email").value = bookingData?.guestEmail || "";
-}
-
-/* ===========================
    PRICE CALCULATIONS
 ============================ */
 
 /**
  * Extract Pricing Information
- * Gets nights, price per night, and total from booking data
+ * Gets nights and total from booking data
  */
 const nights = bookingData?.numberOfNights || 0;
-const pricePerNight = bookingData?.pricePerNight || 0;
 const totalPrice = bookingData?.totalPrice || 0;
+const pricePerNight = nights > 0 ? totalPrice / nights : 0;
 
 /* ===========================
    INVOICE DISPLAY
@@ -103,7 +97,6 @@ if (invoiceContent) {
         <p><strong>Full Name:</strong><br> ${bookingData?.guestName}</p>
         <p><strong>Email:</strong><br> ${bookingData?.guestEmail}</p>
         <p><strong>Room Type:</strong><br> ${bookingData?.roomTypeName}</p>
-        <p><strong>Guests:</strong><br> ${bookingData?.numberOfGuests}</p>
         <p><strong>Check-in:</strong><br> ${new Date(bookingData?.checkInDate).toLocaleDateString()}</p>
         <p><strong>Check-out:</strong><br> ${new Date(bookingData?.checkOutDate).toLocaleDateString()}</p>
         <p><strong>Price per Night:</strong><br> $${pricePerNight.toFixed(2)}</p>
@@ -337,11 +330,15 @@ if (payButton) {
 
                 /**
                  * Clear Cart
-                 * Remove booked room from reservation cart
+                 * Remove booked room from reservation cart (if exists)
                  */
-                let cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
-                cart = cart.filter(room => room.roomId !== bookingData.roomId);
-                localStorage.setItem('reservationRooms', JSON.stringify(cart));
+                try {
+                    let cart = JSON.parse(localStorage.getItem('reservationRooms') || '[]');
+                    cart = cart.filter(room => room.roomId !== bookingData.roomId);
+                    localStorage.setItem('reservationRooms', JSON.stringify(cart));
+                } catch (e) {
+                    console.log("No cart data to clear");
+                }
 
             } else {
                 throw new Error(result.message || 'Payment failed');
