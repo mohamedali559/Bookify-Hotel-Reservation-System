@@ -1,5 +1,6 @@
 ﻿using Bookify_Hotel_Reservation_System__DAL.Models;
 using Bookify_Hotel_Reservation_System_BLL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bookify_Hotel_Reservation_System_PL.Controllers
@@ -19,11 +20,13 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             return View("Index", Amenities);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Add()
         {
             return View("Add");
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult SaveAdd(Amenity amenity)
         {
             if (amenity.Name != null && amenity.Description != null)

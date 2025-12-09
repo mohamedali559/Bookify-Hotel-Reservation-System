@@ -328,7 +328,97 @@ form {
     color: #2563eb;
     text-decoration: underline;
 }
+/* CUSTOM CHECKBOX */
 
+
+.custom-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 0.95rem;
+    user-select: none;
+    color: #475569;
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+    .custom-checkbox:hover {
+        background-color: rgba(11, 58, 102, 0.04);
+        color: #0b3a66;
+    }
+
+    .custom-checkbox:active {
+        background-color: rgba(11, 58, 102, 0.08);
+    }
+
+    .custom-checkbox input {
+        display: none; /* hide default checkbox */
+    }
+
+    .custom-checkbox .checkmark {
+        width: 20px;
+        height: 20px;
+        background-color: #ffffff;
+        border-radius: 6px;
+        border: 2px solid #cbd5e1;
+        position: relative;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .custom-checkbox input:hover + .checkmark {
+        border-color: #0b3a66;
+        box-shadow: 0 0 0 3px rgba(11, 58, 102, 0.1);
+    }
+
+    /* Checked state */
+    .custom-checkbox input:checked + .checkmark {
+        background: linear-gradient(135deg, #0b3a66 0%, #2563eb 100%);
+        border-color: #0b3a66;
+        box-shadow: 0 4px 12px rgba(11, 58, 102, 0.25);
+        transform: scale(1.05);
+    }
+
+        .custom-checkbox input:checked + .checkmark::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 2px;
+            width: 5px;
+            height: 10px;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+            animation: checkmark-animation 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+@keyframes checkmark-animation {
+    0% {
+        transform: rotate(-45deg) scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        transform: rotate(45deg) scale(1);
+        opacity: 1;
+    }
+}
+
+/* Focus state for accessibility */
+.custom-checkbox input:focus + .checkmark {
+    box-shadow: 0 0 0 4px rgba(11, 58, 102, 0.15);
+}
 /* Submit Button */
 .submit-btn {
     width: 100%;
@@ -429,3 +519,4 @@ form {
         display: none;
     }
 }
+

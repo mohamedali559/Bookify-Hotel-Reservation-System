@@ -1,61 +1,94 @@
-﻿@{
+﻿@model Bookify_Hotel_Reservation_System_PL.Models.BookingViewModel
+
+@{
     ViewData["Title"] = "Book Your Stay";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/book.css">
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 }
-
-<section class="hero-section">
-    <div class="hero-overlay"></div>
-    <div>
-        <h1>Book Your Stay</h1>
-        <p>Reserve your room and complete your payment safely and securely.</p>
-    </div>
-</section>
 
 <section id="room-details" class="room-details"></section>
 
 <div class="booking-container">
     <h2>Reservation Details</h2>
 
-    <form id="bookingForm">
-        <div>
-            <label for="name">Full Name</label>
-            <input type="text" id="name" placeholder="Enter your full name" required>
+    @if (!string.IsNullOrEmpty(TempData["SuccessMessage"] as string))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+    <form asp-action="Index" asp-controller="Book" method="post" id="bookingForm">
+        @Html.AntiForgeryToken()
+        
+        <input type="hidden" asp-for="RoomId" id="roomId" />
+
+        <div class="mb-3">
+            <label asp-for="GuestName" class="form-label">Full Name</label>
+            <input asp-for="GuestName" 
+                   class="form-control" 
+                   placeholder="Enter your full name" 
+                   readonly />
+            <span asp-validation-for="GuestName" class="text-danger"></span>
         </div>
 
-        <div>
-            <label for="email">Email Address</label>
-            <input type="email" id="email" placeholder="your.email@example.com" required>
+        <div class="mb-3">
+            <label asp-for="GuestEmail" class="form-label">Email Address</label>
+            <input asp-for="GuestEmail" 
+                   class="form-control" 
+                   placeholder="your.email@example.com" 
+                   readonly />
+            <span asp-validation-for="GuestEmail" class="text-danger"></span>
         </div>
 
-        <div>
-            <label for="guests">Number of Guests</label>
-            <select id="guests" required>
+        <div class="mb-3">
+            <label asp-for="NumberOfGuests" class="form-label">Number of Guests</label>
+            <select asp-for="NumberOfGuests" class="form-select" id="guests">
                 <option value="">Select number of guests</option>
             </select>
+            <span asp-validation-for="NumberOfGuests" class="text-danger"></span>
         </div>
 
-        <div>
-            <label for="room">Selected Room</label>
-            <select id="room" required disabled>
+        <div class="mb-3">
+            <label for="room" class="form-label">Selected Room</label>
+            <select class="form-select" id="room" disabled>
                 <option value="">Loading...</option>
             </select>
         </div>
 
-        <div>
-            <label for="checkin">Check-in Date</label>
-            <input type="date" id="checkin" required>
+        <div class="mb-3">
+            <label asp-for="CheckInDate" class="form-label">Check-in Date</label>
+            <input asp-for="CheckInDate" 
+                   type="text" 
+                   class="form-control" 
+                   id="checkin"
+                   placeholder="Select check-in date" />
+            <span asp-validation-for="CheckInDate" class="text-danger"></span>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> Red dates are already booked
+            </small>
         </div>
 
-        <div>
-            <label for="checkout">Check-out Date</label>
-            <input type="date" id="checkout" required>
+        <div class="mb-3">
+            <label asp-for="CheckOutDate" class="form-label">Check-out Date</label>
+            <input asp-for="CheckOutDate" 
+                   type="text" 
+                   class="form-control" 
+                   id="checkout"
+                   placeholder="Select check-out date" />
+            <span asp-validation-for="CheckOutDate" class="text-danger"></span>
+            <small class="text-muted">
+                <i class="fas fa-info-circle"></i> Red dates are already booked
+            </small>
         </div>
 
-        <button type="button" id="goPayment" class="confirm-btn">
+        <button type="submit" class="confirm-btn">
             <i class="fas fa-credit-card"></i> Proceed to Payment
         </button>
     </form>
@@ -66,6 +99,7 @@
 </div>
 
 @section Scripts {
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="~/js/book.js"></script>
 }
