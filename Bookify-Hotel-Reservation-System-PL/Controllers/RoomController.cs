@@ -26,18 +26,13 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
         /// Displays the main rooms listing page with all available rooms
         /// </summary>
         /// <returns>View with list of room details</returns>
-        public IActionResult Index()
+        public IActionResult Index(string? searchText, string? roomType, string? guests, string? price)
         {
             // Fetch all rooms with their related data (amenities and room type information)
             var rooms = _unitOfWork.Rooms.GetAllWithAmenitiesAndRoomType();
 
-            // Get distinct room type names directly from RoomTypes table for filter dropdown-list
-            // This is optimized to query only the RoomTypes table instead of extracting from all rooms
-            ViewBag.RoomTypeName = _unitOfWork.RoomTypes.GetAllRoomTypeNames();
-
             // Transform entity models to view models for presentation
-            // This ensures only necessary data is sent to the view
-            var roomDetailsViewModel = rooms.Select(item => new RoomDetailsViewModel
+            var roomDetailsViewModels = rooms.Select(item => new RoomDetailsViewModel
             {
                 RoomId = item.Id,
                 Floor = item.Floor,
@@ -52,7 +47,17 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                 Amenities = item.RoomAmenities.Select(ra => ra.Amenity).ToList()
             }).ToList();
 
-            return View(roomDetailsViewModel);
+            // Create the main view model with all necessary data
+            var viewModel = new RoomIndexViewModel
+            {
+                Rooms = roomDetailsViewModels,
+                RoomTypeNames = _unitOfWork.RoomTypes.GetAllRoomTypeNames().ToList(),
+                MinPrice = rooms.Min(r => r.RoomType?.BasePrice ?? 0),
+                MaxPrice = rooms.Max(r => r.RoomType?.BasePrice ?? 0),
+                MaxGuests = rooms.Max(r => r.RoomType?.Guests ?? 1)
+            };
+
+            return View(viewModel);
         }
 
         /// <summary>

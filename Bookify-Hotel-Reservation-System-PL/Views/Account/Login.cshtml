@@ -1,70 +1,120 @@
-﻿@model LoginViewModel
+@model LoginViewModel
 
 @{
-    ViewData["Title"] = "Golden Horizon - Login";
+    ViewData["Title"] = "Login - Bookify";
     Layout = "_HotelLayout";
 }
 
 @section Styles {
     <link rel="stylesheet" href="~/css/login.css">
-    <link rel="stylesheet" href="~/css/register.css">
 }
 
-<div class="login-wrapper">
-    <div class="login-card">
-        <!-- Logo Header like Register Page -->
-        <div class="logo-header">
-            <div class="logo-box-register">GH</div>
-            <h1 class="logo-text-register">Golden Horizon</h1>
+<div class="auth-page">
+    <div class="auth-container">
+        <!-- Left Side - Hotel Image -->
+        <div class="auth-image-section">
+            <div class="image-overlay">
+                <div class="welcome-content">
+                    <div class="hotel-icon">
+                        <i class="fas fa-hotel"></i>
+                    </div>
+                    <h2>Welcome to Golden Horizon</h2>
+                    <p>Your gateway to luxurious stays and unforgettable experiences</p>
+                    <div class="features">
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Best Rates Guaranteed</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Instant Confirmation</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check-circle"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <h2>Sign In</h2>
-        <p class="subtitle">Welcome back! Please login to your account</p>
+        <!-- Right Side - Login Form -->
+        <div class="auth-form-section">
+            <div class="form-wrapper">
+                <div class="form-header">
+                    <h1>Sign In</h1>
+                    <p>Welcome back! Please login to your account</p>
+                </div>
 
-        @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
-        {
-            <div class="alert alert-danger">
-                <i class="fas fa-exclamation-circle"></i>
-                @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                @if (!ViewData.ModelState.IsValid && ViewData.ModelState.ErrorCount > 0)
+                {
+                    <div class="alert-box">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <div>
+                            @Html.ValidationSummary(false, "", new { @class = "mb-0" })
+                        </div>
+                    </div>
+                }
+
+                <form asp-controller="Account" asp-action="Login" method="post">
+                    <input type="hidden" name="returnUrl" value="@ViewData["ReturnUrl"]" />
+
+                    <!-- Email Field -->
+                    <div class="input-group">
+                        <label asp-for="Email">Email Address</label>
+                        <div class="input-box">
+                            <i class="fas fa-envelope"></i>
+                            <input asp-for="Email" 
+                                   type="email" 
+                                   placeholder="Enter your email"
+                                   autocomplete="email" />
+                        </div>
+                        <span asp-validation-for="Email" class="error-text"></span>
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="input-group">
+                        <label asp-for="Password">Password</label>
+                        <div class="input-box">
+                            <i class="fas fa-lock"></i>
+                            <input asp-for="Password" 
+                                   type="password"
+                                   id="passwordField" 
+                                   placeholder="Enter your password"
+                                   autocomplete="current-password" />
+                            <button type="button" class="eye-btn" onclick="togglePasswordVisibility()">
+                            </button>
+                        </div>
+                        <span asp-validation-for="Password" class="error-text"></span>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="form-options">
+                        <div class="checkbox-group">
+                            <input asp-for="RememberMe" type="checkbox" id="rememberCheck" />
+                            <label asp-for="RememberMe" for="rememberCheck">Remember Me</label>
+                        </div>
+                        <a href="#" class="link-text">Forgot Password?</a>
+                    </div>
+
+                    <!-- Login Button -->
+                    <button type="submit" class="submit-btn">
+                        <span>Sign In</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </button>
+
+                    <!-- Register Link -->
+                    <div class="bottom-text">
+                        Don't have an account? 
+                        <a asp-controller="Account" asp-action="Register">Create Account</a>
+                    </div>
+                </form>
             </div>
-        }
-
-        <form asp-controller="Account" asp-action="Login" method="post">
-            <!-- Email -->
-            <div class="form-group">
-                <label asp-for="Email">Email Address</label>
-                <input asp-for="Email" type="email" placeholder="Enter your email" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <!-- Password -->
-            <div class="form-group">
-                <label asp-for="Password">Password</label>
-                <input asp-for="Password" type="password" placeholder="Enter your password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-
-            <!-- Remember Me -->
-            <div class="form-group remember-me-group">
-                <label class="custom-checkbox">
-                    Remember Me
-                    <input asp-for="RememberMe" type="checkbox" />
-                    <span class="checkmark"></span>
-                </label>
-            </div>
-
-            <!-- Login Button -->
-            <button type="submit" class="login-btn">
-                <i class="fas fa-sign-in-alt"></i> Sign In
-            </button>
-
-            <div class="extra-options">
-                <p>Don't have an account? <a asp-controller="Account" asp-action="Register">Create Account</a></p>
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/login.js"></script>
 }
