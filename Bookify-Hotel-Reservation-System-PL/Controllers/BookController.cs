@@ -158,7 +158,7 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
                 return Json(new { success = false, message = "Unauthorized" });
             }
 
-            if (booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled || booking.Status == BookingStatus.Confirmed )
+            if (booking.Status == BookingStatus.Completed || booking.Status == BookingStatus.Cancelled )
             {
                 return Json(new { success = false, message = "Cannot cancel this booking" });
             }

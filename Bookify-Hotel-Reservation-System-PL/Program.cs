@@ -152,7 +152,7 @@ static async Task SeedRolesAndAdminAsync(RoleManager<ApplicationRole> roleManage
             Address = "mansoura"
         };
         // password → Admin@123
-        var result = await userManager.CreateAsync(admin, "Admin@123");
+        var result = await userManager.CreateAsync(admin, "Admin@123"); 
 
         if (!result.Succeeded)
         {
