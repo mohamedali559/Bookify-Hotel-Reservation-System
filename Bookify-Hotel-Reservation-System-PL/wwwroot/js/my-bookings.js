@@ -45,7 +45,7 @@ async function cancelBooking(bookingId) {
         showCancelButton: true,
         confirmButtonColor: '#ef4444',  // Red color for cancel action
         cancelButtonColor: '#64748b',   // Gray color for keep booking
-        confirmButtonText: 'Yes, cancel it!',
+        confirmButtonText: 'Yes, cancel it!'
         cancelButtonText: 'No, keep it'
     });
 

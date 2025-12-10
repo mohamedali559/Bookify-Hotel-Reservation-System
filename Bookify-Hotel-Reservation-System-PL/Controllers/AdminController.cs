@@ -393,6 +393,32 @@ namespace Bookify_Hotel_Reservation_System_PL.Controllers
             return RedirectToAction(nameof(Bookings));
         }
 
+        // Reviews Management
+        public IActionResult Reviews()
+        {
+            var reviews = _unitOfWork.Reviews.GetAllWithUsers();
+            return View(reviews);
+        }
+
+        // Delete Review - POST
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteReview(int id)
+        {
+            var review = _unitOfWork.Reviews.Get(id);
+            if (review == null)
+            {
+                TempData["Error"] = "Review not found.";
+                return RedirectToAction(nameof(Reviews));
+            }
+
+            _unitOfWork.Reviews.Delete(id);
+            _unitOfWork.Complete();
+
+            TempData["Success"] = "Review deleted successfully!";
+            return RedirectToAction(nameof(Reviews));
+        }
+
         [HttpGet]
         public IActionResult CreateAdmin()
         {

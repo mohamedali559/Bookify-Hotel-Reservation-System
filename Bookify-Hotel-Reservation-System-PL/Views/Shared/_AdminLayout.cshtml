@@ -52,6 +52,10 @@
                     <i class="fas fa-calendar-check"></i>
                     <span>Bookings Management</span>
                 </a>
+                <a asp-controller="Admin" asp-action="Reviews" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "Reviews" ? "active" : "")">
+                    <i class="fas fa-star"></i>
+                    <span>Reviews Management</span>
+                </a>
                 <a asp-controller="Admin" asp-action="CreateAdmin" class="nav-item @(ViewContext.RouteData.Values["Action"]?.ToString() == "CreateAdmin" ? "active" : "")">
                     <i class="fas fa-solid fa-plus"></i>
                     <span>Add New Admin</span>
