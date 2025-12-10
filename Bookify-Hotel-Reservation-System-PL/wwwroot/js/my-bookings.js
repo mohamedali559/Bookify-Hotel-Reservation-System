@@ -62,7 +62,7 @@ async function cancelBooking(bookingId) {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(bookingId)
+                body: JSON.stringify({ id: bookingId })
             });
 
             // Parse JSON response from server
